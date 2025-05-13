@@ -8,6 +8,9 @@ import './index.css';
 studio.extend(extension);
 studio.initialize();
 
+// 👇 This hides the editor panel immediately
+studio.ui.hide();
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <Suspense fallback={null}>
