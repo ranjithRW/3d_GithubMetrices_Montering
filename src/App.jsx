@@ -61,15 +61,13 @@ export default function App() {
 
   return (
     <Canvas
-      gl={{ alpha: false, preserveDrawingBuffer: true }}
+    
       camera={{ near: 0.01, far: 1000 }}
     >
       <SheetProvider sheet={sheet}>
-        <Environment files="/background3.hdr" />
+        {/* <Environment files="/background3.hdr" /> */}
         {/* Remove or comment out the fog  */}
-        <directionalLight position={[1, 1, 1]} intensity={2} />
         <ambientLight intensity={0.5} />
-        <pointLight position={[10, 5, 10]} intensity={2} />
         <spotLight
           position={[0, 50, 10]}
           angle={0.15}
@@ -77,7 +75,7 @@ export default function App() {
           intensity={2}
         />
         <hemisphereLight
-          intensity={1}
+          intensity={0.5}
         />
         <InstancedModel />
         <Controls />
