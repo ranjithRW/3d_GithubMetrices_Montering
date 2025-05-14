@@ -19,7 +19,7 @@ import {
 import { KernelSize, BlendFunction } from 'postprocessing';
 import { proxy, useSnapshot } from 'valtio';
 import { editable as e, SheetProvider } from '@theatre/r3f';
-import InstancedModel from '/src/Components/3dmodel';
+import InstancedModel from '/src/Components/demo';
 import stateTheatre from '/src/state.json';
 import { useLayoutEffect } from 'react';
 
@@ -63,37 +63,27 @@ export default function App() {
     <Canvas
       gl={{ alpha: false, preserveDrawingBuffer: true }}
       camera={{ near: 0.01, far: 1000 }}
-      shadows
     >
       <SheetProvider sheet={sheet}>
-        <Environment files="/background3.hdr" background={'true'} />
-        <fog attach="fog" color="#020717" near={1} far={40} />
-        <ambientLight intensity={0.4} color={'#85C8DD'} />
+        <Environment files="/background3.hdr" />
+        {/* Remove or comment out the fog  */}
+        <directionalLight position={[1, 1, 1]} intensity={2} />
+        <ambientLight intensity={0.5} />
+        <pointLight position={[10, 5, 10]} intensity={2} />
         <spotLight
-          intensity={6}
-          angle={0.1}
-          position={[20, 30, 30]}
+          position={[0, 50, 10]}
+          angle={0.15}
           penumbra={1}
-          castShadow
-          decay={2}
-          power={15}
-          color={'#E3C87E'}
+          intensity={2}
         />
-        {/* <Sparkles count={200} scale={10} size={2} speed={0.4} opacity={0.01} /> */}
+        <hemisphereLight
+          intensity={1}
+        />
         <InstancedModel />
         <Controls />
         <EffectComposer>
-          {/* <DepthOfField target={[0, 0, 1]} focalLength={0.007} bokehScale={4} />
-          <Bloom
-            kernelSize={6}
-            luminanceThreshold={0}
-            luminanceSmoothing={10}
-            height={100}
-            intensity={100}
-            opacity={0.01}
-          /> */}
+       
           <Noise opacity={0.05} />
-          {/* <Vignette eskil={false} blendFunction={BlendFunction.NORMAL} /> */}
         </EffectComposer>
       </SheetProvider>
     </Canvas>
