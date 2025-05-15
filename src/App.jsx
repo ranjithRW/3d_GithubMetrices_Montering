@@ -10,9 +10,10 @@ import {
 } from '@react-three/postprocessing';
 import { proxy, useSnapshot } from 'valtio';
 import { editable as e, SheetProvider } from '@theatre/r3f';
+import { useLayoutEffect, useState, useEffect, useMemo, useRef } from 'react';
+import { useSpring, animated, config as springConfig } from '@react-spring/three';
 import InstancedModel from '/src/Components/demo';
 import stateTheatre from '/src/state.json';
-import { useLayoutEffect, useState, useEffect, useMemo } from 'react';
 import ManModel from '/src/Components/manModel';
 
 // Error Boundary Component
@@ -65,13 +66,83 @@ const predefinedPositions = [
   { position: [0, 5, -110], rotation: [0, 0, 0], scale: [20, 20, 20] }
 ];
 
+// Common animation configuration to ensure perfect synchronization
+const ANIMATION_CONFIG = {
+  mass: 1,
+  tension: 70,
+  friction: 14,
+  clamp: false,
+  precision: 0.01,
+  velocity: 0,
+  duration: 800 // Fixed duration in ms to ensure exact timing
+};
+
+// Animated Man Model component with transitions
+function AnimatedManModel({ resource, positionData, isEntering, isExiting }) {
+  const { position, rotation, scale } = positionData;
+  
+  // Calculate animation values
+  const startX = isEntering ? position[0] - 200 : position[0];
+  const endX = isExiting ? position[0] + 200 : position[0];
+  
+  // Create spring animation with exact same settings as InstancedModel
+  const props = useSpring({
+    position: [endX, position[1], position[2]],
+    from: { position: [startX, position[1], position[2]] },
+    config: ANIMATION_CONFIG,
+    immediate: false,
+  });
+
+  return (
+    <animated.group {...props}>
+      <ManModel 
+        position={[0, 0, 0]} // Local position is zero as we use the animated group
+        rotation={rotation}
+        scale={scale}
+        label={resource.name}
+        info={`name: ${resource.name}\nbandwidth: ${(resource.bandwidth * 100).toFixed(2)}%`}
+      />
+    </animated.group>
+  );
+}
+
+// Animated InstancedModel wrapper with exactly the same animation settings
+function AnimatedInstancedModel({ isEntering, isExiting }) {
+  // Create spring animation for the InstancedModel with identical settings to ManModel
+  const props = useSpring({
+    position: isExiting ? [200, 0, 0] : [0, 0, 0],
+    from: { position: isEntering ? [-200, 0, 0] : [0, 0, 0] },
+    config: ANIMATION_CONFIG,
+    immediate: false,
+  });
+
+  return (
+    <animated.group {...props}>
+      <InstancedModel />
+    </animated.group>
+  );
+}
+
 export default function App() {
   const sheet = getProject('Conference', { state: stateTheatre }).sheet('Scene');
 
   const [resourceData, setResourceData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState('');
+  const [previousSelected, setPreviousSelected] = useState('');
   const [projectResources, setProjectResources] = useState({});
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  
+  // Unified animation toggle for all components
+  const [animationState, setAnimationState] = useState({
+    isEntering: false,
+    isExiting: false,
+    key: 0
+  });
+  
+  // Keep track of both current and previous models for animation
+  const [currentModels, setCurrentModels] = useState([]);
+  const [exitingModels, setExitingModels] = useState([]);
 
   useLayoutEffect(() => {
     sheet.sequence.play({ iterationCount: 1000 });
@@ -133,13 +204,101 @@ export default function App() {
       });
   }, []);
 
-  // Use predefined positions for models based on currently selected project
-  const modelPositions = useMemo(() => {
-    if (!selected || !projectResources[selected]) return [];
+  // Handle project selection change
+  useEffect(() => {
+    if (!selected || selected === previousSelected || !projectResources[selected]) return;
+    
+    if (previousSelected) {
+      // Start transition animation
+      setIsTransitioning(true);
+      
+      // First trigger the exit animation for all components
+      setAnimationState({
+        isEntering: false,
+        isExiting: true,
+        key: animationState.key
+      });
+      
+      // Store existing models to animate them out
+      if (projectResources[previousSelected]) {
+        const prevModels = projectResources[previousSelected].map((resource, index) => {
+          if (index < predefinedPositions.length) {
+            return {
+              resource,
+              positionData: predefinedPositions[index],
+              key: `${previousSelected}-${resource.name}`
+            };
+          }
+          return null;
+        }).filter(Boolean);
+        
+        setExitingModels(prevModels);
+      }
+      
+      // Prepare the new models data (but don't animate yet)
+      const newModels = projectResources[selected].map((resource, index) => {
+        if (index < predefinedPositions.length) {
+          return {
+            resource,
+            positionData: predefinedPositions[index],
+            key: `${selected}-${resource.name}`
+          };
+        }
+        return null;
+      }).filter(Boolean);
+      
+      // Wait for exit animation to complete (slightly less than duration)
+      setTimeout(() => {
+        // Set the new models
+        setCurrentModels(newModels);
+        
+        // Clear exiting models
+        setExitingModels([]);
+        
+        // Then trigger the entrance animation for all components
+        setAnimationState({
+          isEntering: true,
+          isExiting: false,
+          key: animationState.key + 1
+        });
+        
+        // Animation complete
+        setTimeout(() => {
+          setIsTransitioning(false);
+        }, ANIMATION_CONFIG.duration);
+        
+      }, ANIMATION_CONFIG.duration);
+    } else {
+      // First load - no animation needed
+      const initialModels = projectResources[selected].map((resource, index) => {
+        if (index < predefinedPositions.length) {
+          return {
+            resource,
+            positionData: predefinedPositions[index],
+            key: `${selected}-${resource.name}`
+          };
+        }
+        return null;
+      }).filter(Boolean);
+      
+      setCurrentModels(initialModels);
+      
+      // Initialize with no animation
+      setAnimationState({
+        isEntering: false,
+        isExiting: false,
+        key: 0
+      });
+    }
+    
+    setPreviousSelected(selected);
+  }, [selected, projectResources, previousSelected, animationState.key]);
 
-    // Return the predefined positions, limited to the number of resources
-    return predefinedPositions.slice(0, Math.min(projectResources[selected].length, predefinedPositions.length));
-  }, [selected, projectResources]);
+  // Handle project selection change
+  const handleProjectChange = (e) => {
+    const newSelection = e.target.value;
+    setSelected(newSelection);
+  };
 
   if (loading) return <div style={{ color: 'white', padding: '20px' }}>Loading...</div>;
 
@@ -160,7 +319,8 @@ export default function App() {
         <select
           id="model-select"
           value={selected}
-          onChange={(e) => setSelected(e.target.value)}
+          onChange={handleProjectChange}
+          disabled={isTransitioning}
         >
           {Object.keys(projectResources).map(key => (
             <option key={key} value={key}>
@@ -170,32 +330,41 @@ export default function App() {
         </select>
       </div>
 
-
       <Canvas camera={{ near: 1, far: 1000 }}>
         <SheetProvider sheet={sheet}>
           <ErrorBoundary>
             <ambientLight intensity={0.5} />
             <directionalLight position={[0, 0, 5]} intensity={1} color="#ffffff" castShadow />
             <hemisphereLight intensity={0.2} />
-            <InstancedModel />
+            
+            {/* Animated InstancedModel - using the unified animation state */}
+            <AnimatedInstancedModel 
+              key={`instanced-model-${animationState.key}`}
+              isEntering={animationState.isEntering}
+              isExiting={animationState.isExiting}
+            />
 
-            {/* Dynamically render ManModels based on the selected project */}
-            {selected && projectResources[selected] && projectResources[selected].map((resource, index) => {
-              if (index < modelPositions.length) {
-                const { position, rotation, scale } = modelPositions[index];
-                return (
-                  <ManModel 
-                    key={resource.name}
-                    position={position}
-                    rotation={rotation}
-                    scale={scale}
-                    label={resource.name}
-                    info={`name: ${resource.name}\nbandwidth: ${(resource.bandwidth * 100).toFixed(2)}%`}
-                  />
-                );
-              }
-              return null;
-            })}
+            {/* Render current models with unified animation state */}
+            {currentModels.map(item => (
+              <AnimatedManModel
+                key={`${animationState.key}-${item.key}`}
+                resource={item.resource}
+                positionData={item.positionData}
+                isEntering={animationState.isEntering}
+                isExiting={animationState.isExiting}
+              />
+            ))}
+
+            {/* Render exiting models - always exiting */}
+            {exitingModels.map(item => (
+              <AnimatedManModel
+                key={`exiting-${item.key}`}
+                resource={item.resource}
+                positionData={item.positionData}
+                isEntering={false}
+                isExiting={true}
+              />
+            ))}
 
             <Controls />
             <EffectComposer>
