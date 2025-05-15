@@ -92,7 +92,7 @@ export default function App() {
         >
           <option value="1">Fortune</option>
           <option value="2">Website</option>
-          <option value="3">3</option>
+          <option value="3">AI Readiness</option>
           <option value="4">4</option>
           <option value="5">5</option>
         </select>
@@ -114,35 +114,64 @@ export default function App() {
             <InstancedModel />
 
             {/* Conditionally render ManModels based on dropdown */}
-          
-              <ManModel
-                position={[-75, 5, 80]}
-                rotation={[0, 5, 0]}
-                scale={[20, 20, 20]}
-              />
-            
-          
-              <ManModel
-                position={[-63, 5, -66]}
-                rotation={[0, 0, 0]}
-                scale={[20, 20, 20]}
-              />
-            
-        
-              <ManModel
-                position={[50, 5, -75]}
-                rotation={[0, -5, 0]}
-                scale={[20, 20, 20]}
-              />
-            
-        
-              <ManModel
-                position={[40, 5, 92]}
-                rotation={[0, -8.5, 0]}
-                scale={[20, 20, 20]}
-              />
-            
-          
+
+            {selected === "1" && (
+              <>
+                <ManModel
+                  position={[-75, 5, 80]}
+                  rotation={[0, 5, 0]}
+                  scale={[20, 20, 20]}
+                />
+                <ManModel
+                  position={[-63, 5, -66]}
+                  rotation={[0, 0, 0]}
+                  scale={[20, 20, 20]}
+                />
+                <ManModel
+                  position={[50, 5, -75]}
+                  rotation={[0, -5, 0]}
+                  scale={[20, 20, 20]}
+                />
+                <ManModel
+                  position={[40, 5, 92]}
+                  rotation={[0, -8.5, 0]}
+                  scale={[20, 20, 20]}
+                />
+              </>
+            )}
+            {selected === "2" && (
+              <>
+                <ManModel
+                  position={[-75, 5, 80]}
+                  rotation={[0, 5, 0]}
+                  scale={[20, 20, 20]}
+                />
+                <ManModel
+                  position={[-63, 5, -66]}
+                  rotation={[0, 0, 0]}
+                  scale={[20, 20, 20]}
+                />
+
+              </>
+            )}
+            {selected === "3" && (
+              <>
+                <ManModel
+                  position={[50, 5, -75]}
+                  rotation={[0, -5, 0]}
+                  scale={[20, 20, 20]}
+                />
+                <ManModel
+                  position={[40, 5, 92]}
+                  rotation={[0, -8.5, 0]}
+                  scale={[20, 20, 20]}
+                />
+
+              </>
+            )}
+
+
+
 
             <Controls />
             <EffectComposer>
