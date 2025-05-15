@@ -12,7 +12,7 @@ import { proxy, useSnapshot } from 'valtio';
 import { editable as e, SheetProvider } from '@theatre/r3f';
 import InstancedModel from '/src/Components/demo';
 import stateTheatre from '/src/state.json';
-import { useLayoutEffect, useState, useEffect } from 'react';
+import { useLayoutEffect, useState, useEffect, useMemo } from 'react';
 import ManModel from '/src/Components/manModel';
 
 // Error Boundary Component
@@ -56,12 +56,22 @@ function Controls() {
   );
 }
 
+// Predefined positions for the man models
+const predefinedPositions = [
+  { position: [-75, 5, 80], rotation: [0, 5, 0], scale: [20, 20, 20] },
+  { position: [-63, 5, -66], rotation: [0, 0, 0], scale: [20, 20, 20] },
+  { position: [50, 5, -75], rotation: [0, -5, 0], scale: [20, 20, 20] },
+  { position: [40, 5, 92], rotation: [0, -8.5, 0], scale: [20, 20, 20] },
+  { position: [0, 5, -110], rotation: [0, 0, 0], scale: [20, 20, 20] }
+];
+
 export default function App() {
   const sheet = getProject('Conference', { state: stateTheatre }).sheet('Scene');
 
-  const [mergedBandwidth, setMergedBandwidth] = useState({});
+  const [resourceData, setResourceData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState('');
+  const [projectResources, setProjectResources] = useState({});
 
   useLayoutEffect(() => {
     sheet.sequence.play({ iterationCount: 1000 });
@@ -80,20 +90,38 @@ export default function App() {
         const resources = json.resourceDetails || json.data || json;
 
         if (Array.isArray(resources)) {
-          const merged = {};
+          setResourceData(resources);
+
+          // Process projects and resources
+          const projectsMap = {};
+          const mergedBandwidth = {};
 
           resources.forEach(resource => {
             const breakdown = resource.currentProjectsBandwidthBreakdown;
+
             if (breakdown && typeof breakdown === 'object') {
-              Object.entries(breakdown).forEach(([key, value]) => {
-                merged[key] = (merged[key] || 0) + value;
+              Object.entries(breakdown).forEach(([projectName, value]) => {
+                // Count resources per project (if bandwidth > 0)
+                if (value > 0) {
+                  if (!projectsMap[projectName]) {
+                    projectsMap[projectName] = [];
+                  }
+                  projectsMap[projectName].push({
+                    name: resource.resource,
+                    bandwidth: value
+                  });
+                }
+
+                // Sum up bandwidth
+                mergedBandwidth[projectName] = (mergedBandwidth[projectName] || 0) + value;
               });
             }
           });
 
-          setMergedBandwidth(merged);
+          setProjectResources(projectsMap);
+
           // Auto-select first project key if available
-          const firstKey = Object.keys(merged)[0] || '';
+          const firstKey = Object.keys(mergedBandwidth)[0] || '';
           setSelected(firstKey);
         } else {
           console.error("❌ resources is not an array or missing");
@@ -104,6 +132,14 @@ export default function App() {
         setLoading(false);
       });
   }, []);
+
+  // Use predefined positions for models based on currently selected project
+  const modelPositions = useMemo(() => {
+    if (!selected || !projectResources[selected]) return [];
+
+    // Return the predefined positions, limited to the number of resources
+    return predefinedPositions.slice(0, Math.min(projectResources[selected].length, predefinedPositions.length));
+  }, [selected, projectResources]);
 
   if (loading) return <div style={{ color: 'white', padding: '20px' }}>Loading...</div>;
 
@@ -126,37 +162,41 @@ export default function App() {
           value={selected}
           onChange={(e) => setSelected(e.target.value)}
         >
-          {Object.keys(mergedBandwidth).map(key => (
+          {Object.keys(projectResources).map(key => (
             <option key={key} value={key}>
               {key}
             </option>
           ))}
         </select>
       </div>
+
+
       <Canvas camera={{ near: 1, far: 1000 }}>
         <SheetProvider sheet={sheet}>
           <ErrorBoundary>
             <ambientLight intensity={0.5} />
-            <directionalLight position={[0, 0, 5]} intensity={1} color="#ffffff" castShadow
-            />
+            <directionalLight position={[0, 0, 5]} intensity={1} color="#ffffff" castShadow />
             <hemisphereLight intensity={0.2} />
             <InstancedModel />
-            {selected === Object.keys(mergedBandwidth)[0] && (
-              <>
-                <ManModel position={[-75, 5, 80]} rotation={[0, 5, 0]} scale={[20, 20, 20]} />
-                <ManModel position={[-63, 5, -66]} rotation={[0, 0, 0]} scale={[20, 20, 20]} />
-                <ManModel position={[50, 5, -75]} rotation={[0, -5, 0]} scale={[20, 20, 20]} />
-                <ManModel position={[40, 5, 92]} rotation={[0, -8.5, 0]} scale={[20, 20, 20]} />
-                <ManModel position={[0,5,-110]} rotation={[0,0,0]} scale={[20,20,20]} />
-                
-              </>
-            )}
-            {selected === Object.keys(mergedBandwidth)[1] && (
-              <>
-                <ManModel position={[-75, 5, 80]} rotation={[0, 5, 0]} scale={[20, 20, 20]} label="Amrin" info={"name: Amrin\nage: 77"} />
-                <ManModel position={[-63, 5, -66]} rotation={[0, 0, 0]} scale={[20, 20, 20]} label="Devi" info={"name: Devi\nage: 34"} />
-              </>
-            )}
+
+            {/* Dynamically render ManModels based on the selected project */}
+            {selected && projectResources[selected] && projectResources[selected].map((resource, index) => {
+              if (index < modelPositions.length) {
+                const { position, rotation, scale } = modelPositions[index];
+                return (
+                  <ManModel 
+                    key={resource.name}
+                    position={position}
+                    rotation={rotation}
+                    scale={scale}
+                    label={resource.name}
+                    info={`name: ${resource.name}\nbandwidth: ${(resource.bandwidth * 100).toFixed(2)}%`}
+                  />
+                );
+              }
+              return null;
+            })}
+
             <Controls />
             <EffectComposer>
               <Noise opacity={0.05} />
@@ -166,4 +206,4 @@ export default function App() {
       </Canvas>
     </div>
   );
-} 
+}
