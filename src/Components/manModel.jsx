@@ -16,24 +16,24 @@ const ManModel = ({ label = "", info = "", position, rotation, scale }) => {
     const labelYOffset = modelHeight + 0.05;
 
     // Panel dimensions
-    const panelWidth = 10;
+    const panelWidth = 7;
     const panelHeight = 2;
-    
+
     // Text formatting settings
     const textFontSize = 0.25; // Reduced font size to fit more content
     const lineHeight = 1.2;    // Reduced line height to be more compact
     const textPadding = 0.2;   // Padding inside the panel
-    
+
     // Process the info text
     const infoLines = info.split('\n');
-    
+
     // Calculate how many lines can fit in the panel with padding
     const availableHeight = panelHeight - (textPadding * 2);
     const maxLinesToShow = Math.floor(availableHeight / (textFontSize * lineHeight));
-    
+
     // Calculate total needed scroll positions
     const totalScrollPositions = Math.max(1, infoLines.length - maxLinesToShow + 1);
-    
+
     // Scrolling state
     const [scrollIndex, setScrollIndex] = useState(0);
     const needsScrolling = infoLines.length > maxLinesToShow;
@@ -41,7 +41,7 @@ const ManModel = ({ label = "", info = "", position, rotation, scale }) => {
     // Auto-scroll effect
     useEffect(() => {
         if (!showInfo || !needsScrolling) return;
-        
+
         const interval = setInterval(() => {
             setScrollIndex(prev => {
                 const nextIndex = prev + 1;
@@ -99,28 +99,18 @@ const ManModel = ({ label = "", info = "", position, rotation, scale }) => {
                     </mesh>
 
                     {/* Title bar */}
-                    <mesh position={[0, panelHeight/2 - 0.3, 0.01]}>
+                    <mesh position={[0, panelHeight / 2 - 0.3, 0.01]}>
                         <planeGeometry args={[panelWidth, 0.6]} />
                         <meshBasicMaterial color="#e0e0e0" side={THREE.DoubleSide} />
                     </mesh>
-                    
-                    {/* Title text */}
-                    <Text
-                        position={[0, panelHeight/2 - 0.3, 0.02]}
-                        fontSize={0.35}
-                        color="black"
-                        fontWeight="bold"
-                        anchorX="center"
-                        anchorY="middle"
-                    >
-                        {label}
-                    </Text>
-                    
+
+
+
                     {/* Content area */}
                     <group position={[0, 0, 0.01]}>
                         {/* Text content - strictly contained within panel boundaries */}
                         <Text
-                            position={[0, panelHeight/2 - 0.7, 0]} 
+                            position={[0, panelHeight / 2 - 0.3, 0.2]}
                             fontSize={textFontSize}
                             color="black"
                             anchorX="center"
@@ -129,19 +119,19 @@ const ManModel = ({ label = "", info = "", position, rotation, scale }) => {
                             lineHeight={lineHeight}
                             textAlign="left"
                             clipRect={[
-                                -panelWidth/2 + textPadding,                 // left
-                                -panelHeight/2 + textPadding,                // bottom
-                                panelWidth/2 - textPadding,                  // right
-                                panelHeight/2 - 0.7                          // top (adjusted for title)
+                                -panelWidth / 2 + textPadding,                 // left
+                                -panelHeight / 0 + textPadding,                // bottom
+                                panelWidth / 2 - textPadding,                  // right
+                                panelHeight / 2 - 0.7                          // top (adjusted for title)
                             ]}
                         >
                             {infoLines.slice(scrollIndex, scrollIndex + maxLinesToShow).join('\n')}
                         </Text>
-                        
+
                         {/* Scroll indicator */}
                         {needsScrolling && (
                             <Text
-                                position={[panelWidth/2 - 0.5, -panelHeight/2 + 0.15, 0]}
+                                position={[panelWidth / 2 - 0.5, -panelHeight / 2 + 0.15, 0]}
                                 fontSize={0.2}
                                 color="gray"
                                 anchorX="center"
