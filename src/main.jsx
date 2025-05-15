@@ -13,7 +13,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <Suspense fallback={null}>
       <App />
-      <ResourceDetails />
+      {/* <ResourceDetails /> */}
     </Suspense>
   </React.StrictMode>
 );

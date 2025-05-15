@@ -2,7 +2,6 @@ import { getProject } from '@theatre/core';
 import { Canvas, useThree } from '@react-three/fiber';
 import {
   OrbitControls,
-  useGLTF,
   TransformControls,
 } from '@react-three/drei';
 import {
@@ -64,15 +63,56 @@ function Controls() {
   );
 }
 
-
-
 export default function App() {
   const sheet = getProject('Conference', { state: stateTheatre }).sheet('Scene');
-  const [selected, setSelected] = useState('1');
+
+  const [mergedBandwidth, setMergedBandwidth] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [selected, setSelected] = useState('');
 
   useLayoutEffect(() => {
     sheet.sequence.play({ iterationCount: 1000 });
   }, []);
+
+  // Fetch and process data
+  useEffect(() => {
+    fetch('https://githubmetricsbackend-erdfgta5drc3dzev.eastus-01.azurewebsites.net/v1/resource-details')
+      .then(response => {
+        if (!response.ok) throw new Error('Failed to fetch data');
+        return response.json();
+      })
+      .then(json => {
+        setLoading(false);
+
+        const resources = json.resourceDetails || json.data || json;
+
+        if (Array.isArray(resources)) {
+          const merged = {};
+
+          resources.forEach(resource => {
+            const breakdown = resource.currentProjectsBandwidthBreakdown;
+            if (breakdown && typeof breakdown === 'object') {
+              Object.entries(breakdown).forEach(([key, value]) => {
+                merged[key] = (merged[key] || 0) + value;
+              });
+            }
+          });
+
+          setMergedBandwidth(merged);
+          // Auto-select first project key if available
+          const firstKey = Object.keys(merged)[0] || '';
+          setSelected(firstKey);
+        } else {
+          console.error("❌ resources is not an array or missing");
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return <div style={{ color: 'white', padding: '20px' }}>Loading...</div>;
 
   return (
     <div style={{ position: 'relative', width: '100vw', height: '100vh' }}>
@@ -93,17 +133,13 @@ export default function App() {
           value={selected}
           onChange={(e) => setSelected(e.target.value)}
         >
-          <option value="1">Fortune</option>
-          <option value="2">Website</option>
-          <option value="3">AI Readiness</option>
-          <option value="4">chatleon</option>
-          <option value="5">brandcut</option>
+          {Object.keys(mergedBandwidth).map(key => (
+            <option key={key} value={key}>
+              {key}
+            </option>
+          ))}
         </select>
       </div>
-
-      {/* Conditional text message */}
-
-
 
       {/* 3D Canvas */}
       <Canvas camera={{ near: 1, far: 1000 }}>
@@ -120,8 +156,10 @@ export default function App() {
 
             <InstancedModel />
 
-            {/* Conditionally render ManModels based on dropdown */}
-            {selected === "1" && (
+            {/* Example: Render different ManModel sets based on selected project key */}
+            {/* You can customize or map your real data here */}
+
+            {selected === Object.keys(mergedBandwidth)[0] && (
               <>
                 <ManModel position={[-75, 5, 80]} rotation={[0, 5, 0]} scale={[20, 20, 20]} />
                 <ManModel position={[-63, 5, -66]} rotation={[0, 0, 0]} scale={[20, 20, 20]} />
@@ -129,51 +167,17 @@ export default function App() {
                 <ManModel position={[40, 5, 92]} rotation={[0, -8.5, 0]} scale={[20, 20, 20]} />
               </>
             )}
-            {selected === "2" && (
-              <>
-                {selected === "2" && (
-                  <>
-                    <ManModel
-                      position={[-75, 5, 80]}
-                      rotation={[0, 5, 0]}
-                      scale={[20, 20, 20]}
-                      label="Amrin"
-                      info={"name: Amrin\nage: 77"}
-                    />
 
-                    <ManModel
-                      position={[-63, 5, -66]}
-                      rotation={[0, 0, 0]}
-                      scale={[20, 20, 20]}
-                      label="Devi"
-                      info={"name: Devi\nage: 34"}
-                    />
-                  </>
-                )}
-
-              </>
-            )}
-            {selected === "3" && (
+            {/* For demonstration, you can add other conditions for other keys */}
+            {selected === Object.keys(mergedBandwidth)[1] && (
               <>
-                <ManModel position={[50, 5, -75]} rotation={[0, -5, 0]} scale={[20, 20, 20]} />
-                <ManModel position={[40, 5, 92]} rotation={[0, -8.5, 0]} scale={[20, 20, 20]} />
-              </>
-            )}
-            {selected === "4" && (
-              <>
-                <ManModel position={[-75, 5, 80]} rotation={[0, 5, 0]} scale={[20, 20, 20]} />
-                <ManModel position={[-63, 5, -66]} rotation={[0, 0, 0]} scale={[20, 20, 20]} />
-                <ManModel position={[50, 5, -75]} rotation={[0, -5, 0]} scale={[20, 20, 20]} />
-                <ManModel position={[40, 5, 92]} rotation={[0, -8.5, 0]} scale={[20, 20, 20]} />
-              </>
-            )}
-            {selected === "5" && (
-              <>
-                <ManModel position={[50, 5, -75]} rotation={[0, -5, 0]} scale={[20, 20, 20]} />
-                <ManModel position={[40, 5, 92]} rotation={[0, -8.5, 0]} scale={[20, 20, 20]} />
+                <ManModel position={[-75, 5, 80]} rotation={[0, 5, 0]} scale={[20, 20, 20]} label="Amrin" info={"name: Amrin\nage: 77"} />
+                <ManModel position={[-63, 5, -66]} rotation={[0, 0, 0]} scale={[20, 20, 20]} label="Devi" info={"name: Devi\nage: 34"} />
               </>
             )}
 
+            {/* Add more cases as needed */}
+            
             <Controls />
             <EffectComposer>
               <Noise opacity={0.05} />
