@@ -84,7 +84,7 @@ export default function App() {
         borderRadius: '8px',
         color: 'white'
       }}>
-        <label htmlFor="model-select" style={{ marginRight: '8px' }}>Select Model:</label>
+        <label htmlFor="model-select" style={{ marginRight: '8px' }}>Select Project:</label>
         <select
           id="model-select"
           value={selected}
