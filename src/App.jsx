@@ -131,19 +131,25 @@ export default function App() {
             )}
             {selected === "2" && (
               <>
-                <ManModel
-                  position={[-75, 5, 80]}
-                  rotation={[0, 5, 0]}
-                  scale={[20, 20, 20]}
-                  label="Amrin"
-                />
+                {selected === "2" && (
+                  <>
+                    <ManModel
+                      position={[-75, 5, 80]}
+                      rotation={[0, 5, 0]}
+                      scale={[20, 20, 20]}
+                      label="Amrin"
+                      info={"name: Amrin\nage: 77"}
+                    />
 
-                <ManModel
-                  position={[-63, 5, -66]}
-                  rotation={[0, 0, 0]}
-                  scale={[20, 20, 20]}
-                  label="Devi"
-                />
+                    <ManModel
+                      position={[-63, 5, -66]}
+                      rotation={[0, 0, 0]}
+                      scale={[20, 20, 20]}
+                      label="Devi"
+                      info={"name: Devi\nage: 34"}
+                    />
+                  </>
+                )}
 
               </>
             )}
