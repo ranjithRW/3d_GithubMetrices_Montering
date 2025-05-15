@@ -93,8 +93,8 @@ export default function App() {
           <option value="1">Fortune</option>
           <option value="2">Website</option>
           <option value="3">AI Readiness</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
+          <option value="4">chatleon</option>
+          <option value="5">brandcut</option>
         </select>
       </div>
 
