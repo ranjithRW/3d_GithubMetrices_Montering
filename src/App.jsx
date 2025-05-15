@@ -3,6 +3,7 @@ import { Canvas, useThree } from '@react-three/fiber';
 import {
   OrbitControls,
   useGLTF,
+  TransformControls,
 } from '@react-three/drei';
 import {
   EffectComposer,
@@ -63,6 +64,8 @@ function Controls() {
   );
 }
 
+
+
 export default function App() {
   const sheet = getProject('Conference', { state: stateTheatre }).sheet('Scene');
   const [selected, setSelected] = useState('1');
@@ -98,6 +101,10 @@ export default function App() {
         </select>
       </div>
 
+      {/* Conditional text message */}
+
+
+
       {/* 3D Canvas */}
       <Canvas camera={{ near: 1, far: 1000 }}>
         <SheetProvider sheet={sheet}>
@@ -114,29 +121,12 @@ export default function App() {
             <InstancedModel />
 
             {/* Conditionally render ManModels based on dropdown */}
-
             {selected === "1" && (
               <>
-                <ManModel
-                  position={[-75, 5, 80]}
-                  rotation={[0, 5, 0]}
-                  scale={[20, 20, 20]}
-                />
-                <ManModel
-                  position={[-63, 5, -66]}
-                  rotation={[0, 0, 0]}
-                  scale={[20, 20, 20]}
-                />
-                <ManModel
-                  position={[50, 5, -75]}
-                  rotation={[0, -5, 0]}
-                  scale={[20, 20, 20]}
-                />
-                <ManModel
-                  position={[40, 5, 92]}
-                  rotation={[0, -8.5, 0]}
-                  scale={[20, 20, 20]}
-                />
+                <ManModel position={[-75, 5, 80]} rotation={[0, 5, 0]} scale={[20, 20, 20]} />
+                <ManModel position={[-63, 5, -66]} rotation={[0, 0, 0]} scale={[20, 20, 20]} />
+                <ManModel position={[50, 5, -75]} rotation={[0, -5, 0]} scale={[20, 20, 20]} />
+                <ManModel position={[40, 5, 92]} rotation={[0, -8.5, 0]} scale={[20, 20, 20]} />
               </>
             )}
             {selected === "2" && (
@@ -145,68 +135,36 @@ export default function App() {
                   position={[-75, 5, 80]}
                   rotation={[0, 5, 0]}
                   scale={[20, 20, 20]}
+                  label="Amrin"
                 />
+
                 <ManModel
                   position={[-63, 5, -66]}
                   rotation={[0, 0, 0]}
                   scale={[20, 20, 20]}
+                  label="Devi"
                 />
 
               </>
             )}
             {selected === "3" && (
               <>
-                <ManModel
-                  position={[50, 5, -75]}
-                  rotation={[0, -5, 0]}
-                  scale={[20, 20, 20]}
-                />
-                <ManModel
-                  position={[40, 5, 92]}
-                  rotation={[0, -8.5, 0]}
-                  scale={[20, 20, 20]}
-                />
-
+                <ManModel position={[50, 5, -75]} rotation={[0, -5, 0]} scale={[20, 20, 20]} />
+                <ManModel position={[40, 5, 92]} rotation={[0, -8.5, 0]} scale={[20, 20, 20]} />
               </>
             )}
-
             {selected === "4" && (
               <>
-                <ManModel
-                  position={[-75, 5, 80]}
-                  rotation={[0, 5, 0]}
-                  scale={[20, 20, 20]}
-                />
-                <ManModel
-                  position={[-63, 5, -66]}
-                  rotation={[0, 0, 0]}
-                  scale={[20, 20, 20]}
-                />
-                <ManModel
-                  position={[50, 5, -75]}
-                  rotation={[0, -5, 0]}
-                  scale={[20, 20, 20]}
-                />
-                <ManModel
-                  position={[40, 5, 92]}
-                  rotation={[0, -8.5, 0]}
-                  scale={[20, 20, 20]}
-                />
+                <ManModel position={[-75, 5, 80]} rotation={[0, 5, 0]} scale={[20, 20, 20]} />
+                <ManModel position={[-63, 5, -66]} rotation={[0, 0, 0]} scale={[20, 20, 20]} />
+                <ManModel position={[50, 5, -75]} rotation={[0, -5, 0]} scale={[20, 20, 20]} />
+                <ManModel position={[40, 5, 92]} rotation={[0, -8.5, 0]} scale={[20, 20, 20]} />
               </>
             )}
             {selected === "5" && (
               <>
-                <ManModel
-                  position={[50, 5, -75]}
-                  rotation={[0, -5, 0]}
-                  scale={[20, 20, 20]}
-                />
-                <ManModel
-                  position={[40, 5, 92]}
-                  rotation={[0, -8.5, 0]}
-                  scale={[20, 20, 20]}
-                />
-
+                <ManModel position={[50, 5, -75]} rotation={[0, -5, 0]} scale={[20, 20, 20]} />
+                <ManModel position={[40, 5, 92]} rotation={[0, -8.5, 0]} scale={[20, 20, 20]} />
               </>
             )}
 
