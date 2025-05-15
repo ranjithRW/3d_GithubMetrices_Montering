@@ -140,8 +140,6 @@ export default function App() {
           ))}
         </select>
       </div>
-
-      {/* 3D Canvas */}
       <Canvas camera={{ near: 1, far: 1000 }}>
         <SheetProvider sheet={sheet}>
           <ErrorBoundary>
@@ -153,12 +151,7 @@ export default function App() {
               castShadow
             />
             <hemisphereLight intensity={0.2} />
-
             <InstancedModel />
-
-            {/* Example: Render different ManModel sets based on selected project key */}
-            {/* You can customize or map your real data here */}
-
             {selected === Object.keys(mergedBandwidth)[0] && (
               <>
                 <ManModel position={[-75, 5, 80]} rotation={[0, 5, 0]} scale={[20, 20, 20]} />
@@ -167,17 +160,12 @@ export default function App() {
                 <ManModel position={[40, 5, 92]} rotation={[0, -8.5, 0]} scale={[20, 20, 20]} />
               </>
             )}
-
-            {/* For demonstration, you can add other conditions for other keys */}
             {selected === Object.keys(mergedBandwidth)[1] && (
               <>
                 <ManModel position={[-75, 5, 80]} rotation={[0, 5, 0]} scale={[20, 20, 20]} label="Amrin" info={"name: Amrin\nage: 77"} />
                 <ManModel position={[-63, 5, -66]} rotation={[0, 0, 0]} scale={[20, 20, 20]} label="Devi" info={"name: Devi\nage: 34"} />
               </>
             )}
-
-            {/* Add more cases as needed */}
-            
             <Controls />
             <EffectComposer>
               <Noise opacity={0.05} />
