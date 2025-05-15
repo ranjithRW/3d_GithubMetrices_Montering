@@ -78,13 +78,13 @@ const ANIMATION_CONFIG = {
 };
 
 // Animated Man Model component with transitions
-function AnimatedManModel({ resource, positionData, isEntering, isExiting }) {
+function AnimatedManModel({ resource, positionData, isEntering, isExiting, delayedIssues }) {
   const { position, rotation, scale } = positionData;
-  
+
   // Calculate animation values
   const startX = isEntering ? position[0] - 200 : position[0];
   const endX = isExiting ? position[0] + 200 : position[0];
-  
+
   // Create spring animation with exact same settings as InstancedModel
   const props = useSpring({
     position: [endX, position[1], position[2]],
@@ -93,14 +93,21 @@ function AnimatedManModel({ resource, positionData, isEntering, isExiting }) {
     immediate: false,
   });
 
+  // Format the delayed issues information
+  const delayedIssuesInfo = delayedIssues && delayedIssues.length > 0
+    ? `Delayed Issues:\n${delayedIssues.map(issue => `  - ${issue.issueTitle}`).join('\n')}`
+    : 'No delayed issues';
+  // Combine all the info, including the delayed issues
+  const info = `${delayedIssuesInfo}`;
+
   return (
     <animated.group {...props}>
-      <ManModel 
+      <ManModel
         position={[0, 0, 0]} // Local position is zero as we use the animated group
         rotation={rotation}
         scale={scale}
         label={resource.name}
-        info={`name: ${resource.name}\nbandwidth: ${(resource.bandwidth * 100).toFixed(2)}%`}
+        info={info} // Pass the combined info here
       />
     </animated.group>
   );
@@ -132,14 +139,14 @@ export default function App() {
   const [previousSelected, setPreviousSelected] = useState('');
   const [projectResources, setProjectResources] = useState({});
   const [isTransitioning, setIsTransitioning] = useState(false);
-  
+
   // Unified animation toggle for all components
   const [animationState, setAnimationState] = useState({
     isEntering: false,
     isExiting: false,
     key: 0
   });
-  
+
   // Keep track of both current and previous models for animation
   const [currentModels, setCurrentModels] = useState([]);
   const [exitingModels, setExitingModels] = useState([]);
@@ -179,7 +186,8 @@ export default function App() {
                   }
                   projectsMap[projectName].push({
                     name: resource.resource,
-                    bandwidth: value
+                    bandwidth: value,
+                    delayedIssues: resource.delayedIssues // Include delayed issues
                   });
                 }
 
@@ -207,18 +215,18 @@ export default function App() {
   // Handle project selection change
   useEffect(() => {
     if (!selected || selected === previousSelected || !projectResources[selected]) return;
-    
+
     if (previousSelected) {
       // Start transition animation
       setIsTransitioning(true);
-      
+
       // First trigger the exit animation for all components
       setAnimationState({
         isEntering: false,
         isExiting: true,
         key: animationState.key
       });
-      
+
       // Store existing models to animate them out
       if (projectResources[previousSelected]) {
         const prevModels = projectResources[previousSelected].map((resource, index) => {
@@ -231,10 +239,10 @@ export default function App() {
           }
           return null;
         }).filter(Boolean);
-        
+
         setExitingModels(prevModels);
       }
-      
+
       // Prepare the new models data (but don't animate yet)
       const newModels = projectResources[selected].map((resource, index) => {
         if (index < predefinedPositions.length) {
@@ -246,27 +254,27 @@ export default function App() {
         }
         return null;
       }).filter(Boolean);
-      
+
       // Wait for exit animation to complete (slightly less than duration)
       setTimeout(() => {
         // Set the new models
         setCurrentModels(newModels);
-        
+
         // Clear exiting models
         setExitingModels([]);
-        
+
         // Then trigger the entrance animation for all components
         setAnimationState({
           isEntering: true,
           isExiting: false,
           key: animationState.key + 1
         });
-        
+
         // Animation complete
         setTimeout(() => {
           setIsTransitioning(false);
         }, ANIMATION_CONFIG.duration);
-        
+
       }, ANIMATION_CONFIG.duration);
     } else {
       // First load - no animation needed
@@ -280,9 +288,9 @@ export default function App() {
         }
         return null;
       }).filter(Boolean);
-      
+
       setCurrentModels(initialModels);
-      
+
       // Initialize with no animation
       setAnimationState({
         isEntering: false,
@@ -290,7 +298,7 @@ export default function App() {
         key: 0
       });
     }
-    
+
     setPreviousSelected(selected);
   }, [selected, projectResources, previousSelected, animationState.key]);
 
@@ -336,9 +344,9 @@ export default function App() {
             <ambientLight intensity={0.5} />
             <directionalLight position={[0, 0, 5]} intensity={1} color="#ffffff" castShadow />
             <hemisphereLight intensity={0.2} />
-            
+
             {/* Animated InstancedModel - using the unified animation state */}
-            <AnimatedInstancedModel 
+            <AnimatedInstancedModel
               key={`instanced-model-${animationState.key}`}
               isEntering={animationState.isEntering}
               isExiting={animationState.isExiting}
@@ -352,6 +360,7 @@ export default function App() {
                 positionData={item.positionData}
                 isEntering={animationState.isEntering}
                 isExiting={animationState.isExiting}
+                delayedIssues={item.resource.delayedIssues}  // Pass delayedIssues to the component
               />
             ))}
 
@@ -363,6 +372,7 @@ export default function App() {
                 positionData={item.positionData}
                 isEntering={false}
                 isExiting={true}
+                delayedIssues={item.resource.delayedIssues} // Pass delayedIssues to the component
               />
             ))}
 
