@@ -15,28 +15,44 @@ const ManModel = ({ label = "", info = "", position, rotation, scale }) => {
     const modelHeight = boundingBox.max.y - boundingBox.min.y;
     const labelYOffset = modelHeight + 0.05;
 
-    // Text + plane size and scroll settings
-    const textFontSize = 0.3;
-    const lineHeight = 1.4;
-    const planeHeight = 2;
+    // Panel dimensions
+    const panelWidth = 10;
+    const panelHeight = 2;
+    
+    // Text formatting settings
+    const textFontSize = 0.25; // Reduced font size to fit more content
+    const lineHeight = 1.2;    // Reduced line height to be more compact
+    const textPadding = 0.2;   // Padding inside the panel
+    
+    // Process the info text
     const infoLines = info.split('\n');
-    const maxLinesToShow = Math.floor(planeHeight / (textFontSize * lineHeight));
+    
+    // Calculate how many lines can fit in the panel with padding
+    const availableHeight = panelHeight - (textPadding * 2);
+    const maxLinesToShow = Math.floor(availableHeight / (textFontSize * lineHeight));
+    
+    // Calculate total needed scroll positions
+    const totalScrollPositions = Math.max(1, infoLines.length - maxLinesToShow + 1);
+    
+    // Scrolling state
     const [scrollIndex, setScrollIndex] = useState(0);
+    const needsScrolling = infoLines.length > maxLinesToShow;
 
-    // Scroll text every 2 seconds
+    // Auto-scroll effect
     useEffect(() => {
-        if (!showInfo || infoLines.length <= maxLinesToShow) return;
-
+        if (!showInfo || !needsScrolling) return;
+        
         const interval = setInterval(() => {
             setScrollIndex(prev => {
-                if (prev + maxLinesToShow < infoLines.length) return prev + 1;
-                return 0;
+                const nextIndex = prev + 1;
+                return nextIndex >= totalScrollPositions ? 0 : nextIndex;
             });
         }, 2000);
 
         return () => clearInterval(interval);
-    }, [showInfo, infoLines.length, maxLinesToShow]);
+    }, [showInfo, needsScrolling, totalScrollPositions]);
 
+    // Play animation
     useEffect(() => {
         const sitting = actions['Sitting'] || actions[Object.keys(actions)[0]];
         if (sitting) sitting.play();
@@ -60,7 +76,7 @@ const ManModel = ({ label = "", info = "", position, rotation, scale }) => {
         >
             <primitive object={clonedScene} />
 
-            {/* Label */}
+            {/* Name Label (shown when info panel is hidden) */}
             {label && !showInfo && (
                 <Text
                     position={[0, labelYOffset, 0]}
@@ -75,26 +91,67 @@ const ManModel = ({ label = "", info = "", position, rotation, scale }) => {
 
             {/* Info Panel */}
             {showInfo && (
-                <>
+                <group position={[0, labelYOffset, 0]}>
                     {/* Background Panel */}
-                    <mesh position={[0, labelYOffset, 0]}>
-                        <planeGeometry args={[10, planeHeight]} />
+                    <mesh>
+                        <planeGeometry args={[panelWidth, panelHeight]} />
                         <meshBasicMaterial color="white" transparent opacity={0.9} side={THREE.DoubleSide} />
                     </mesh>
 
-                    {/* Scrollable Text within bounds */}
+                    {/* Title bar */}
+                    <mesh position={[0, panelHeight/2 - 0.3, 0.01]}>
+                        <planeGeometry args={[panelWidth, 0.6]} />
+                        <meshBasicMaterial color="#e0e0e0" side={THREE.DoubleSide} />
+                    </mesh>
+                    
+                    {/* Title text */}
                     <Text
-                        position={[0, labelYOffset + planeHeight / 2 - textFontSize, 0.1]} // top padding
-                        fontSize={textFontSize}
+                        position={[0, panelHeight/2 - 0.3, 0.02]}
+                        fontSize={0.35}
                         color="black"
+                        fontWeight="bold"
                         anchorX="center"
-                        anchorY="top"
-                        maxWidth={9}
-                        lineHeight={lineHeight}
+                        anchorY="middle"
                     >
-                        {infoLines.slice(scrollIndex, scrollIndex + maxLinesToShow).join('\n')}
+                        {label}
                     </Text>
-                </>
+                    
+                    {/* Content area */}
+                    <group position={[0, 0, 0.01]}>
+                        {/* Text content - strictly contained within panel boundaries */}
+                        <Text
+                            position={[0, panelHeight/2 - 0.7, 0]} 
+                            fontSize={textFontSize}
+                            color="black"
+                            anchorX="center"
+                            anchorY="top"
+                            maxWidth={panelWidth - textPadding * 2}
+                            lineHeight={lineHeight}
+                            textAlign="left"
+                            clipRect={[
+                                -panelWidth/2 + textPadding,                 // left
+                                -panelHeight/2 + textPadding,                // bottom
+                                panelWidth/2 - textPadding,                  // right
+                                panelHeight/2 - 0.7                          // top (adjusted for title)
+                            ]}
+                        >
+                            {infoLines.slice(scrollIndex, scrollIndex + maxLinesToShow).join('\n')}
+                        </Text>
+                        
+                        {/* Scroll indicator */}
+                        {needsScrolling && (
+                            <Text
+                                position={[panelWidth/2 - 0.5, -panelHeight/2 + 0.15, 0]}
+                                fontSize={0.2}
+                                color="gray"
+                                anchorX="center"
+                                anchorY="bottom"
+                            >
+                                {`${scrollIndex + 1}/${totalScrollPositions}`}
+                            </Text>
+                        )}
+                    </group>
+                </group>
             )}
         </group>
     );
