@@ -15,6 +15,28 @@ const ManModel = ({ label = "", info = "", position, rotation, scale }) => {
     const modelHeight = boundingBox.max.y - boundingBox.min.y;
     const labelYOffset = modelHeight + 0.05;
 
+    // Text + plane size and scroll settings
+    const textFontSize = 0.3;
+    const lineHeight = 1.4;
+    const planeHeight = 2;
+    const infoLines = info.split('\n');
+    const maxLinesToShow = Math.floor(planeHeight / (textFontSize * lineHeight));
+    const [scrollIndex, setScrollIndex] = useState(0);
+
+    // Scroll text every 2 seconds
+    useEffect(() => {
+        if (!showInfo || infoLines.length <= maxLinesToShow) return;
+
+        const interval = setInterval(() => {
+            setScrollIndex(prev => {
+                if (prev + maxLinesToShow < infoLines.length) return prev + 1;
+                return 0;
+            });
+        }, 2000);
+
+        return () => clearInterval(interval);
+    }, [showInfo, infoLines.length, maxLinesToShow]);
+
     useEffect(() => {
         const sitting = actions['Sitting'] || actions[Object.keys(actions)[0]];
         if (sitting) sitting.play();
@@ -24,6 +46,7 @@ const ManModel = ({ label = "", info = "", position, rotation, scale }) => {
         e.stopPropagation();
         if (info) {
             setShowInfo(!showInfo);
+            setScrollIndex(0);
         }
     };
 
@@ -37,7 +60,7 @@ const ManModel = ({ label = "", info = "", position, rotation, scale }) => {
         >
             <primitive object={clonedScene} />
 
-            {/* Always show label if provided */}
+            {/* Label */}
             {label && !showInfo && (
                 <Text
                     position={[0, labelYOffset, 0]}
@@ -50,30 +73,29 @@ const ManModel = ({ label = "", info = "", position, rotation, scale }) => {
                 </Text>
             )}
 
-            {/* Show info text on click */}
+            {/* Info Panel */}
             {showInfo && (
                 <>
-                    {/* Background plane */}
+                    {/* Background Panel */}
                     <mesh position={[0, labelYOffset, 0]}>
-                        <planeGeometry args={[3, 1.5]} />
+                        <planeGeometry args={[10, planeHeight]} />
                         <meshBasicMaterial color="white" transparent opacity={0.9} side={THREE.DoubleSide} />
                     </mesh>
 
-                    {/* Info text */}
+                    {/* Scrollable Text within bounds */}
                     <Text
-                        position={[0, labelYOffset, 0.01]}  // Slightly in front of the plane
-                        fontSize={0.3}
+                        position={[0, labelYOffset + planeHeight / 2 - textFontSize, 0.1]} // top padding
+                        fontSize={textFontSize}
                         color="black"
                         anchorX="center"
-                        anchorY="top-baseline"
-                        maxWidth={4}
-                        lineHeight={1.4}
+                        anchorY="top"
+                        maxWidth={9}
+                        lineHeight={lineHeight}
                     >
-                        {info}
+                        {infoLines.slice(scrollIndex, scrollIndex + maxLinesToShow).join('\n')}
                     </Text>
                 </>
             )}
-
         </group>
     );
 };
