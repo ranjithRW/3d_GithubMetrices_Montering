@@ -6,570 +6,544 @@ Source: https://sketchfab.com/3d-models/room-test-77b8b4f3d580403e8facd878743862
 Title: Room Test
 */
 import { editable as e, SheetProvider } from '@theatre/r3f';
-import React, { useRef, useMemo, useState, useEffect } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { useGLTF, Merged } from '@react-three/drei';
 
 export default function Model(props) {
-    const group = useRef();
-
-    const { nodes, materials } = useGLTF('/room_test.glb');
-    const { scene: manScene } = useGLTF('/man.glb'); // Load the man.glb model
-    const [manLoaded, setManLoaded] = useState(false); // State to track if the man model is loaded
-
-    useEffect(() => {
-        if (manScene) {
-            // Check if there are any meshes loaded (more robust check)
-            let meshesLoaded = false;
-            manScene.traverse((object) => {
-                if (object.isMesh) {
-                    meshesLoaded = true;
-                }
-            });
-
-            if (meshesLoaded) {
-                console.log("Man scene loaded!");
-                setManLoaded(true);
-            }
-        }
-    }, [manScene]);
-
-    // Conditional rendering - show the loading indicator (or nothing) while the man model loads
-    if (!manLoaded) {
-        return null; // Or you could return a loading indicator: <mesh>Loading...</mesh>
-    }
-
-    return (
-        <group ref={group} {...props} dispose={null}>
-            <group position={[3.366, 14.217, 85.313]} rotation={[-Math.PI / 2, 0, 1.555]}>
-                <group
-                    position={[13.528, -1.472, -7.363]}
-                    rotation={[-Math.PI / 2, 0.794, 0]}
-                    scale={-0.029}>
-                    <mesh
-                        castShadow
-                        receiveShadow
-                        geometry={nodes.Object_8.geometry}
-                        material={materials['HMI-Brushed_Alum']}
-                        position={[50.425, 0, -50.236]}
-                    />
-                </group>
-                <group position={[0, 0, -14.238]} scale={0.039}>
-                    <mesh
-                        castShadow
-                        receiveShadow
-                        geometry={nodes.Object_17.geometry}
-                        material={materials['HMI-_V2_Beech']}
-                        position={[0, 0, 0.524]}
-                    />
-                </group>
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_10.geometry}
-                    material={materials['HMI-_BU_Black_U']}
-                    position={[-0.248, -0.532, -14.217]}
-                    scale={0.039}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_12.geometry}
-                    material={materials['HMI-_BU_Black_U']}
-                    position={[0, 0, -14.187]}
-                    scale={0.039}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_14.geometry}
-                    material={materials['HMI-_BK_Black']}
-                    position={[-25.845, -13.228, -14.015]}
-                />
-            </group>
-            <group position={[-63.34, 22.951, -68.664]} rotation={[-Math.PI / 2, 0, -1.579]}>
-                <group position={[1.359, 0.533, -18.929]} rotation={[-1.571, 1.553, 0]}>
-                    <mesh
-                        castShadow
-                        receiveShadow
-                        geometry={nodes.Object_24.geometry}
-                        material={materials['HMI-Aeron-G1_Gr']}
-                    />
-                    <mesh
-                        castShadow
-                        receiveShadow
-                        geometry={nodes.Object_25.geometry}
-                        material={materials['HMI-Aeron-G1_1']}
-                    />
-                </group>
-                <group position={[1.263, 0.161, -21.362]} rotation={[-1.571, 1.553, 0]}>
-                    <mesh
-                        castShadow
-                        receiveShadow
-                        geometry={nodes.Object_39.geometry}
-                        material={materials['HMI-Aeron-G1_Gr']}
-                    />
-                    <mesh
-                        castShadow
-                        receiveShadow
-                        geometry={nodes.Object_40.geometry}
-                        material={materials['HMI-Aeron-G1_1']}
-                    />
-                </group>
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_20.geometry}
-                    material={materials['HMI-Aeron-G1_Gr']}
-                    position={[1.359, 0.533, -18.929]}
-                    rotation={[-1.571, 1.553, 0]}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_22.geometry}
-                    material={materials['HMI-Aeron-G1_Gr']}
-                    position={[1.187, 0.461, -20.011]}
-                    rotation={[-1.571, 1.553, 0]}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_27.geometry}
-                    material={materials['HMI-Aeron-G1_1']}
-                    position={[2.352, 0.114, -22.951]}
-                    rotation={[0, 0, 1.545]}
-                    scale={0.039}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_29.geometry}
-                    material={materials['HMI-3D01_Pellic']}
-                    position={[1.359, 0.533, -18.929]}
-                    rotation={[-1.571, 1.553, 0]}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_31.geometry}
-                    material={materials['HMI-3D01_Pellic']}
-                    position={[1.187, 0.461, -20.011]}
-                    rotation={[-1.571, 1.553, 0]}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_33.geometry}
-                    material={materials['HMI-Aeron-G1_Gr']}
-                    position={[1.187, 0.461, -20.011]}
-                    rotation={[-1.571, 1.553, 0]}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_35.geometry}
-                    material={materials['HMI-_Polished_Al']}
-                    position={[2.352, 0.114, -22.951]}
-                    rotation={[0, 0, 1.545]}
-                    scale={0.039}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_37.geometry}
-                    material={materials['HMI-Aeron-Leathe']}
-                    position={[2.352, 0.114, -22.951]}
-                    rotation={[0, 0, 1.545]}
-                    scale={0.039}
-                />
-            </group>
-            <group position={[-93.455, 38.578, 4.76]} rotation={[-Math.PI / 2, 0, 1.568]}>
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_43.geometry}
-                    material={materials['HMI-BK_Black']}
-                    position={[17.445, 9.891, -36.898]}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_45.geometry}
-                    material={materials['HMI-UL_Natural']}
-                    position={[13.445, 7.977, -17.313]}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_47.geometry}
-                    material={materials['HMI-MS_Metallic']}
-                    position={[-16.641, 6.043, -22.984]}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_49.geometry}
-                    material={materials['HMI-_Marker_Boar']}
-                    position={[-13.992, 0.836, 13.977]}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_51.geometry}
-                    material={materials['HMI-MS_Metallic']}
-                    position={[8.273, 0.191, 34.938]}
-                />
-            </group>
-            <group position={[-94.008, 0, 81.36]} rotation={[-Math.PI / 2, 0, 1.518]} scale={0.577}>
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_56.geometry}
-                    material={materials['14_-_Default']}
-                    position={[51.196, -4.706, 44.487]}
-                    rotation={[0, 0, 0.012]}
-                />
-            </group>
-            <group position={[-93.393, 0, -66.948]} rotation={[-Math.PI / 2, 0, 1.518]} scale={0.577}>
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_59.geometry}
-                    material={materials['14_-_Default']}
-                    position={[51.196, -4.706, 44.487]}
-                    rotation={[0, 0, 0.012]}
-                />
-            </group>
-            <group position={[-74.161, 22.951, 81.602]} rotation={[-Math.PI / 2, 0, -3.083]}>
-                <group position={[1.359, 0.533, -18.929]} rotation={[-1.571, 1.553, 0]}>
-                    <mesh
-                        castShadow
-                        receiveShadow
-                        geometry={nodes.Object_66.geometry}
-                        material={materials['HMI-Aeron-G1_Gr']}
-                    />
-                    <mesh
-                        castShadow
-                        receiveShadow
-                        geometry={nodes.Object_67.geometry}
-                        material={materials['HMI-Aeron-G1_1']}
-                    />
-                </group>
-                <group position={[1.263, 0.161, -21.362]} rotation={[-1.571, 1.553, 0]}>
-                    <mesh
-                        castShadow
-                        receiveShadow
-                        geometry={nodes.Object_81.geometry}
-                        material={materials['HMI-Aeron-G1_Gr']}
-                    />
-                    <mesh
-                        castShadow
-                        receiveShadow
-                        geometry={nodes.Object_82.geometry}
-                        material={materials['HMI-Aeron-G1_1']}
-                    />
-                </group>
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_62.geometry}
-                    material={materials['HMI-Aeron-G1_Gr']}
-                    position={[1.187, 0.461, -20.011]}
-                    rotation={[-Math.PI / 2, 1.553, 0]}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_64.geometry}
-                    material={materials['HMI-Aeron-G1_Gr']}
-                    position={[1.359, 0.533, -18.929]}
-                    rotation={[-Math.PI / 2, 1.553, 0]}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_69.geometry}
-                    material={materials['HMI-Aeron-G1_1']}
-                    position={[2.352, 0.114, -22.951]}
-                    rotation={[0, 0, 1.545]}
-                    scale={0.039}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_71.geometry}
-                    material={materials['HMI-3D01_Pellic']}
-                    position={[1.359, 0.533, -18.929]}
-                    rotation={[-1.571, 1.553, 0]}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_73.geometry}
-                    material={materials['HMI-3D01_Pellic']}
-                    position={[1.187, 0.461, -20.011]}
-                    rotation={[-1.571, 1.553, 0]}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_75.geometry}
-                    material={materials['HMI-Aeron-G1_Gr']}
-                    position={[1.187, 0.461, -20.011]}
-                    rotation={[-1.571, 1.553, 0]}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_77.geometry}
-                    material={materials['HMI-_Polished_Al']}
-                    position={[2.352, 0.114, -22.951]}
-                    rotation={[0, 0, 1.545]}
-                    scale={0.039}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_79.geometry}
-                    material={materials['HMI-Aeron-Leathe']}
-                    position={[2.352, 0.114, -22.951]}
-                    rotation={[0, 0, 1.545]}
-                    scale={0.039}
-                />
-            </group>
-            <group position={[93.48, 0, -79.09]} rotation={[-Math.PI / 2, 0, -1.574]} scale={0.577}>
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_85.geometry}
-                    material={materials['14_-_Default']}
-                    position={[51.196, -4.706, 44.487]}
-                    rotation={[0, 0, 0.012]}
-                />
-            </group>
-            <group position={[98.465, 0, -0.66]} rotation={[-Math.PI / 2, 0, -1.573]} scale={0.577}>
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_88.geometry}
-                    material={materials['14_-_Default']}
-                    position={[51.196, -4.706, 44.487]}
-                    rotation={[0, 0, 0.012]}
-                />
-            </group>
-            <group position={[51.795, 22.951, -78.221]} rotation={[-Math.PI / 2, 0, -0.445]}>
-                <group position={[1.359, 0.533, -18.929]} rotation={[-1.571, 1.553, 0]}>
-                    <mesh
-                        castShadow
-                        receiveShadow
-                        geometry={nodes.Object_97.geometry}
-                        material={materials['HMI-Aeron-G1_Gr']}
-                    />
-                    <mesh
-                        castShadow
-                        receiveShadow
-                        geometry={nodes.Object_98.geometry}
-                        material={materials['HMI-Aeron-G1_1']}
-                    />
-                </group>
-                <group position={[1.263, 0.161, -21.362]} rotation={[-1.571, 1.553, 0]}>
-                    <mesh
-                        castShadow
-                        receiveShadow
-                        geometry={nodes.Object_110.geometry}
-                        material={materials['HMI-Aeron-G1_Gr']}
-                    />
-                    <mesh
-                        castShadow
-                        receiveShadow
-                        geometry={nodes.Object_111.geometry}
-                        material={materials['HMI-Aeron-G1_1']}
-                    />
-                </group>
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_91.geometry}
-                    material={materials['HMI-3D01_Pellic']}
-                    position={[1.359, 0.533, -18.929]}
-                    rotation={[-1.571, 1.553, 0]}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_93.geometry}
-                    material={materials['HMI-Aeron-G1_Gr']}
-                    position={[1.359, 0.533, -18.929]}
-                    rotation={[-1.571, 1.553, 0]}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_95.geometry}
-                    material={materials['HMI-Aeron-G1_Gr']}
-                    position={[1.187, 0.461, -20.011]}
-                    rotation={[-Math.PI / 2, 1.553, 0]}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_100.geometry}
-                    material={materials['HMI-Aeron-G1_1']}
-                    position={[2.352, 0.114, -22.951]}
-                    rotation={[0, 0, 1.545]}
-                    scale={0.039}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_102.geometry}
-                    material={materials['HMI-3D01_Pellic']}
-                    position={[1.187, 0.461, -20.011]}
-                    rotation={[-1.571, 1.553, 0]}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_104.geometry}
-                    material={materials['HMI-Aeron-G1_Gr']}
-                    position={[1.187, 0.461, -20.011]}
-                    rotation={[-1.571, 1.553, 0]}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_106.geometry}
-                    material={materials['HMI-_Polished_Al']}
-                    position={[2.352, 0.114, -22.951]}
-                    rotation={[0, 0, 1.545]}
-                    scale={0.039}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_108.geometry}
-                    material={materials['HMI-Aeron-Leathe']}
-                    position={[2.352, 0.114, -22.951]}
-                    rotation={[0, 0, 1.545]}
-                    scale={0.039}
-                />
-            </group>
-            <group position={[45.167, 22.951, 91.805]} rotation={[-Math.PI / 2, 0, 2.363]}>
-                <group position={[1.359, 0.533, -18.929]} rotation={[-1.571, 1.553, 0]}>
-                    <mesh
-                        castShadow
-                        receiveShadow
-                        geometry={nodes.Object_124.geometry}
-                        material={materials['HMI-Aeron-G1_Gr']}
-                    />
-                    <mesh
-                        castShadow
-                        receiveShadow
-                        geometry={nodes.Object_125.geometry}
-                        material={materials['HMI-Aeron-G1_1']}
-                    />
-                </group>
-                <group position={[1.263, 0.161, -21.362]} rotation={[-1.571, 1.553, 0]}>
-                    <mesh
-                        castShadow
-                        receiveShadow
-                        geometry={nodes.Object_135.geometry}
-                        material={materials['HMI-Aeron-G1_Gr']}
-                    />
-                    <mesh
-                        castShadow
-                        receiveShadow
-                        geometry={nodes.Object_136.geometry}
-                        material={materials['HMI-Aeron-G1_1']}
-                    />
-                </group>
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_116.geometry}
-                    material={materials['HMI-3D01_Pellic']}
-                    position={[1.187, 0.461, -20.011]}
-                    rotation={[-1.571, 1.553, 0]}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_118.geometry}
-                    material={materials['HMI-3D01_Pellic']}
-                    position={[1.359, 0.533, -18.929]}
-                    rotation={[-1.571, 1.553, 0]}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_120.geometry}
-                    material={materials['HMI-Aeron-G1_Gr']}
-                    position={[1.359, 0.533, -18.929]}
-                    rotation={[-1.571, 1.553, 0]}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_122.geometry}
-                    material={materials['HMI-Aeron-G1_Gr']}
-                    position={[1.187, 0.461, -20.011]}
-                    rotation={[-Math.PI / 2, 1.553, 0]}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_127.geometry}
-                    material={materials['HMI-Aeron-G1_1']}
-                    position={[2.352, 0.114, -22.951]}
-                    rotation={[0, 0, 1.545]}
-                    scale={0.039}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_129.geometry}
-                    material={materials['HMI-Aeron-G1_Gr']}
-                    position={[1.187, 0.461, -20.011]}
-                    rotation={[-1.571, 1.553, 0]}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_131.geometry}
-                    material={materials['HMI-_Polished_Al']}
-                    position={[2.352, 0.114, -22.951]}
-                    rotation={[0, 0, 1.545]}
-                    scale={0.039}
-                />
-                <mesh
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_133.geometry}
-                    material={materials['HMI-Aeron-Leathe']}
-                    position={[2.352, 0.114, -22.951]}
-                    rotation={[0, 0, 1.545]}
-                    scale={0.039}
-                />
-            </group>
-            <mesh
-                castShadow
-                receiveShadow
-                geometry={nodes.Object_53.geometry}
-                material={materials.carpet_flooring}
-                position={[-2.975, -38.358, -0.143]}
-                rotation={[-Math.PI / 2, 0, 0]}
-            />
-            <mesh
-                castShadow
-                receiveShadow
-                geometry={nodes.Object_113.geometry}
-                material={materials.carpet_flooring}
-                position={[-67.171, 0, -116.96]}
-                rotation={[-Math.PI / 2, 0, 0]}
-            />
+      const group = useRef();
+    
+  const { nodes, materials } = useGLTF('/room_test.glb')
+  return (
+    <group ref={group} {...props} dispose={null}>
+      <group position={[3.366, 14.217, 85.313]} rotation={[-Math.PI / 2, 0, 1.555]}>
+        <group
+          position={[13.528, -1.472, -7.363]}
+          rotation={[-Math.PI / 2, 0.794, 0]}
+          scale={-0.029}>
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.Object_8.geometry}
+            material={materials['HMI-Brushed_Alum']}
+            position={[50.425, 0, -50.236]}
+          />
         </group>
-    )
+        <group position={[0, 0, -14.238]} scale={0.039}>
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.Object_17.geometry}
+            material={materials['HMI-_V2_Beech']}
+            position={[0, 0, 0.524]}
+          />
+        </group>
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_10.geometry}
+          material={materials['HMI-_BU_Black_U']}
+          position={[-0.248, -0.532, -14.217]}
+          scale={0.039}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_12.geometry}
+          material={materials['HMI-_BU_Black_U']}
+          position={[0, 0, -14.187]}
+          scale={0.039}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_14.geometry}
+          material={materials['HMI-_BK_Black']}
+          position={[-25.845, -13.228, -14.015]}
+        />
+      </group>
+      <group position={[-63.34, 22.951, -68.664]} rotation={[-Math.PI / 2, 0, -1.579]}>
+        <group position={[1.359, 0.533, -18.929]} rotation={[-1.571, 1.553, 0]}>
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.Object_24.geometry}
+            material={materials['HMI-Aeron-G1_Gr']}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.Object_25.geometry}
+            material={materials['HMI-Aeron-G1_1']}
+          />
+        </group>
+        <group position={[1.263, 0.161, -21.362]} rotation={[-1.571, 1.553, 0]}>
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.Object_39.geometry}
+            material={materials['HMI-Aeron-G1_Gr']}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.Object_40.geometry}
+            material={materials['HMI-Aeron-G1_1']}
+          />
+        </group>
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_20.geometry}
+          material={materials['HMI-Aeron-G1_Gr']}
+          position={[1.359, 0.533, -18.929]}
+          rotation={[-1.571, 1.553, 0]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_22.geometry}
+          material={materials['HMI-Aeron-G1_Gr']}
+          position={[1.187, 0.461, -20.011]}
+          rotation={[-1.571, 1.553, 0]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_27.geometry}
+          material={materials['HMI-Aeron-G1_1']}
+          position={[2.352, 0.114, -22.951]}
+          rotation={[0, 0, 1.545]}
+          scale={0.039}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_29.geometry}
+          material={materials['HMI-3D01_Pellic']}
+          position={[1.359, 0.533, -18.929]}
+          rotation={[-1.571, 1.553, 0]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_31.geometry}
+          material={materials['HMI-3D01_Pellic']}
+          position={[1.187, 0.461, -20.011]}
+          rotation={[-1.571, 1.553, 0]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_33.geometry}
+          material={materials['HMI-Aeron-G1_Gr']}
+          position={[1.187, 0.461, -20.011]}
+          rotation={[-1.571, 1.553, 0]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_35.geometry}
+          material={materials['HMI-_Polished_Al']}
+          position={[2.352, 0.114, -22.951]}
+          rotation={[0, 0, 1.545]}
+          scale={0.039}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_37.geometry}
+          material={materials['HMI-Aeron-Leathe']}
+          position={[2.352, 0.114, -22.951]}
+          rotation={[0, 0, 1.545]}
+          scale={0.039}
+        />
+      </group>
+      <group position={[-93.455, 38.578, 4.76]} rotation={[-Math.PI / 2, 0, 1.568]}>
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_43.geometry}
+          material={materials['HMI-BK_Black']}
+          position={[17.445, 9.891, -36.898]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_45.geometry}
+          material={materials['HMI-UL_Natural']}
+          position={[13.445, 7.977, -17.313]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_47.geometry}
+          material={materials['HMI-MS_Metallic']}
+          position={[-16.641, 6.043, -22.984]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_49.geometry}
+          material={materials['HMI-_Marker_Boar']}
+          position={[-13.992, 0.836, 13.977]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_51.geometry}
+          material={materials['HMI-MS_Metallic']}
+          position={[8.273, 0.191, 34.938]}
+        />
+      </group>
+      <group position={[-94.008, 0, 81.36]} rotation={[-Math.PI / 2, 0, 1.518]} scale={0.577}>
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_56.geometry}
+          material={materials['14_-_Default']}
+          position={[51.196, -4.706, 44.487]}
+          rotation={[0, 0, 0.012]}
+        />
+      </group>
+      <group position={[-93.393, 0, -66.948]} rotation={[-Math.PI / 2, 0, 1.518]} scale={0.577}>
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_59.geometry}
+          material={materials['14_-_Default']}
+          position={[51.196, -4.706, 44.487]}
+          rotation={[0, 0, 0.012]}
+        />
+      </group>
+      <group position={[-74.161, 22.951, 81.602]} rotation={[-Math.PI / 2, 0, -3.083]}>
+        <group position={[1.359, 0.533, -18.929]} rotation={[-1.571, 1.553, 0]}>
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.Object_66.geometry}
+            material={materials['HMI-Aeron-G1_Gr']}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.Object_67.geometry}
+            material={materials['HMI-Aeron-G1_1']}
+          />
+        </group>
+        <group position={[1.263, 0.161, -21.362]} rotation={[-1.571, 1.553, 0]}>
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.Object_81.geometry}
+            material={materials['HMI-Aeron-G1_Gr']}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.Object_82.geometry}
+            material={materials['HMI-Aeron-G1_1']}
+          />
+        </group>
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_62.geometry}
+          material={materials['HMI-Aeron-G1_Gr']}
+          position={[1.187, 0.461, -20.011]}
+          rotation={[-Math.PI / 2, 1.553, 0]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_64.geometry}
+          material={materials['HMI-Aeron-G1_Gr']}
+          position={[1.359, 0.533, -18.929]}
+          rotation={[-Math.PI / 2, 1.553, 0]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_69.geometry}
+          material={materials['HMI-Aeron-G1_1']}
+          position={[2.352, 0.114, -22.951]}
+          rotation={[0, 0, 1.545]}
+          scale={0.039}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_71.geometry}
+          material={materials['HMI-3D01_Pellic']}
+          position={[1.359, 0.533, -18.929]}
+          rotation={[-1.571, 1.553, 0]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_73.geometry}
+          material={materials['HMI-3D01_Pellic']}
+          position={[1.187, 0.461, -20.011]}
+          rotation={[-1.571, 1.553, 0]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_75.geometry}
+          material={materials['HMI-Aeron-G1_Gr']}
+          position={[1.187, 0.461, -20.011]}
+          rotation={[-1.571, 1.553, 0]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_77.geometry}
+          material={materials['HMI-_Polished_Al']}
+          position={[2.352, 0.114, -22.951]}
+          rotation={[0, 0, 1.545]}
+          scale={0.039}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_79.geometry}
+          material={materials['HMI-Aeron-Leathe']}
+          position={[2.352, 0.114, -22.951]}
+          rotation={[0, 0, 1.545]}
+          scale={0.039}
+        />
+      </group>
+      <group position={[93.48, 0, -79.09]} rotation={[-Math.PI / 2, 0, -1.574]} scale={0.577}>
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_85.geometry}
+          material={materials['14_-_Default']}
+          position={[51.196, -4.706, 44.487]}
+          rotation={[0, 0, 0.012]}
+        />
+      </group>
+      <group position={[98.465, 0, -0.66]} rotation={[-Math.PI / 2, 0, -1.573]} scale={0.577}>
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_88.geometry}
+          material={materials['14_-_Default']}
+          position={[51.196, -4.706, 44.487]}
+          rotation={[0, 0, 0.012]}
+        />
+      </group>
+      <group position={[51.795, 22.951, -78.221]} rotation={[-Math.PI / 2, 0, -0.445]}>
+        <group position={[1.359, 0.533, -18.929]} rotation={[-1.571, 1.553, 0]}>
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.Object_97.geometry}
+            material={materials['HMI-Aeron-G1_Gr']}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.Object_98.geometry}
+            material={materials['HMI-Aeron-G1_1']}
+          />
+        </group>
+        <group position={[1.263, 0.161, -21.362]} rotation={[-1.571, 1.553, 0]}>
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.Object_110.geometry}
+            material={materials['HMI-Aeron-G1_Gr']}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.Object_111.geometry}
+            material={materials['HMI-Aeron-G1_1']}
+          />
+        </group>
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_91.geometry}
+          material={materials['HMI-3D01_Pellic']}
+          position={[1.359, 0.533, -18.929]}
+          rotation={[-1.571, 1.553, 0]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_93.geometry}
+          material={materials['HMI-Aeron-G1_Gr']}
+          position={[1.359, 0.533, -18.929]}
+          rotation={[-1.571, 1.553, 0]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_95.geometry}
+          material={materials['HMI-Aeron-G1_Gr']}
+          position={[1.187, 0.461, -20.011]}
+          rotation={[-Math.PI / 2, 1.553, 0]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_100.geometry}
+          material={materials['HMI-Aeron-G1_1']}
+          position={[2.352, 0.114, -22.951]}
+          rotation={[0, 0, 1.545]}
+          scale={0.039}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_102.geometry}
+          material={materials['HMI-3D01_Pellic']}
+          position={[1.187, 0.461, -20.011]}
+          rotation={[-1.571, 1.553, 0]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_104.geometry}
+          material={materials['HMI-Aeron-G1_Gr']}
+          position={[1.187, 0.461, -20.011]}
+          rotation={[-1.571, 1.553, 0]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_106.geometry}
+          material={materials['HMI-_Polished_Al']}
+          position={[2.352, 0.114, -22.951]}
+          rotation={[0, 0, 1.545]}
+          scale={0.039}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_108.geometry}
+          material={materials['HMI-Aeron-Leathe']}
+          position={[2.352, 0.114, -22.951]}
+          rotation={[0, 0, 1.545]}
+          scale={0.039}
+        />
+      </group>
+      <group position={[45.167, 22.951, 91.805]} rotation={[-Math.PI / 2, 0, 2.363]}>
+        <group position={[1.359, 0.533, -18.929]} rotation={[-1.571, 1.553, 0]}>
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.Object_124.geometry}
+            material={materials['HMI-Aeron-G1_Gr']}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.Object_125.geometry}
+            material={materials['HMI-Aeron-G1_1']}
+          />
+        </group>
+        <group position={[1.263, 0.161, -21.362]} rotation={[-1.571, 1.553, 0]}>
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.Object_135.geometry}
+            material={materials['HMI-Aeron-G1_Gr']}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.Object_136.geometry}
+            material={materials['HMI-Aeron-G1_1']}
+          />
+        </group>
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_116.geometry}
+          material={materials['HMI-3D01_Pellic']}
+          position={[1.187, 0.461, -20.011]}
+          rotation={[-1.571, 1.553, 0]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_118.geometry}
+          material={materials['HMI-3D01_Pellic']}
+          position={[1.359, 0.533, -18.929]}
+          rotation={[-1.571, 1.553, 0]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_120.geometry}
+          material={materials['HMI-Aeron-G1_Gr']}
+          position={[1.359, 0.533, -18.929]}
+          rotation={[-1.571, 1.553, 0]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_122.geometry}
+          material={materials['HMI-Aeron-G1_Gr']}
+          position={[1.187, 0.461, -20.011]}
+          rotation={[-Math.PI / 2, 1.553, 0]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_127.geometry}
+          material={materials['HMI-Aeron-G1_1']}
+          position={[2.352, 0.114, -22.951]}
+          rotation={[0, 0, 1.545]}
+          scale={0.039}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_129.geometry}
+          material={materials['HMI-Aeron-G1_Gr']}
+          position={[1.187, 0.461, -20.011]}
+          rotation={[-1.571, 1.553, 0]}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_131.geometry}
+          material={materials['HMI-_Polished_Al']}
+          position={[2.352, 0.114, -22.951]}
+          rotation={[0, 0, 1.545]}
+          scale={0.039}
+        />
+        <mesh
+          castShadow
+          receiveShadow
+          geometry={nodes.Object_133.geometry}
+          material={materials['HMI-Aeron-Leathe']}
+          position={[2.352, 0.114, -22.951]}
+          rotation={[0, 0, 1.545]}
+          scale={0.039}
+        />
+      </group>
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes.Object_53.geometry}
+        material={materials.carpet_flooring}
+        position={[-2.975, -38.358, -0.143]}
+        rotation={[-Math.PI / 2, 0, 0]}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes.Object_113.geometry}
+        material={materials.carpet_flooring}
+        position={[-67.171, 0, -116.96]}
+        rotation={[-Math.PI / 2, 0, 0]}
+      />
+    </group>
+  )
 }
 
-useGLTF.preload('/room_test.glb');
-useGLTF.preload('/man.glb');
+useGLTF.preload('/room_test.glb')
