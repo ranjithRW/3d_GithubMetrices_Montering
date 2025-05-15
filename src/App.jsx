@@ -3,6 +3,7 @@ import { Canvas, useThree } from '@react-three/fiber';
 import {
   OrbitControls,
   TransformControls,
+  PerspectiveCamera
 } from '@react-three/drei';
 import {
   EffectComposer,
@@ -41,6 +42,19 @@ function ErrorBoundary({ children }) {
 const modes = ['translate', 'rotate', 'scale'];
 const state = proxy({ current: null, mode: 0 });
 
+// Camera setup component to handle initial position
+function CameraSetup() {
+  const { camera } = useThree();
+  
+  useEffect(() => {
+    // Set initial camera position farther away to see the full model
+    camera.position.set(0, 60, 250);
+    camera.updateProjectionMatrix();
+  }, [camera]);
+  
+  return null;
+}
+
 function Controls() {
   const snap = useSnapshot(state);
   const scene = useThree((state) => state.scene);
@@ -52,7 +66,14 @@ function Controls() {
         />
       )}
       <OrbitControls
-        dragToLook={true} enablePan={true} makeDefault minPolarAngle={0} maxPolarAngle={Math.PI / 1.75} />
+        dragToLook={true} 
+        enablePan={true} 
+        makeDefault 
+        minPolarAngle={0} 
+        maxPolarAngle={Math.PI / 1.75}
+        minDistance={100} // Add min distance to prevent zooming in too close
+        maxDistance={500} // Add max distance to limit how far users can zoom out
+      />
     </>
   );
 }
@@ -338,9 +359,10 @@ export default function App() {
         </select>
       </div>
 
-      <Canvas camera={{ near: 1, far: 1000 }}>
+      <Canvas camera={{ position: [0, 0, 200], near: 1, far: 1000 }}>
         <SheetProvider sheet={sheet}>
           <ErrorBoundary>
+            <CameraSetup />
             <ambientLight intensity={0.5} />
             <directionalLight position={[0, 0, 5]} intensity={1} color="#ffffff" castShadow />
             <hemisphereLight intensity={0.2} />
