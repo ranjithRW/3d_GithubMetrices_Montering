@@ -47,18 +47,11 @@ function Controls() {
   return (
     <>
       {snap.current && (
-        <TransformControls
-          object={scene.getObjectByName(snap.current)}
-          mode={modes[snap.mode]}
+        <TransformControls object={scene.getObjectByName(snap.current)} mode={modes[snap.mode]}
         />
       )}
       <OrbitControls
-        dragToLook={true}
-        enablePan={true}
-        makeDefault
-        minPolarAngle={0}
-        maxPolarAngle={Math.PI / 1.75}
-      />
+        dragToLook={true} enablePan={true} makeDefault minPolarAngle={0} maxPolarAngle={Math.PI / 1.75} />
     </>
   );
 }
@@ -144,11 +137,7 @@ export default function App() {
         <SheetProvider sheet={sheet}>
           <ErrorBoundary>
             <ambientLight intensity={0.5} />
-            <directionalLight
-              position={[0, 0, 5]}
-              intensity={1}
-              color="#ffffff"
-              castShadow
+            <directionalLight position={[0, 0, 5]} intensity={1} color="#ffffff" castShadow
             />
             <hemisphereLight intensity={0.2} />
             <InstancedModel />
@@ -158,6 +147,8 @@ export default function App() {
                 <ManModel position={[-63, 5, -66]} rotation={[0, 0, 0]} scale={[20, 20, 20]} />
                 <ManModel position={[50, 5, -75]} rotation={[0, -5, 0]} scale={[20, 20, 20]} />
                 <ManModel position={[40, 5, 92]} rotation={[0, -8.5, 0]} scale={[20, 20, 20]} />
+                <ManModel position={[0,5,-110]} rotation={[0,0,0]} scale={[20,20,20]} />
+                
               </>
             )}
             {selected === Object.keys(mergedBandwidth)[1] && (
@@ -175,4 +166,4 @@ export default function App() {
       </Canvas>
     </div>
   );
-}
+} 
