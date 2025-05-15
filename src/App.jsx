@@ -103,7 +103,7 @@ export default function App() {
                         intensity={2}
                     /> */}
           <hemisphereLight
-            intensity={0.5}
+            intensity={0.2}
           />
           <InstancedModel />
           <ManModel
@@ -111,7 +111,22 @@ export default function App() {
             rotation={[0, 5, 0]}
             scale={[20, 20, 20]}
           />
-         
+          <ManModel
+            position={[-63, 5, -66]}
+            rotation={[0, 0, 0]}
+            scale={[20, 20, 20]}
+          />
+          <ManModel
+            position={[50, 5, -75]}
+            rotation={[0, -5, 0]}
+            scale={[20, 20, 20]}
+          />
+          <ManModel
+            position={[40, 5, 92]}
+            rotation={[0, -8.5, 0]}
+            scale={[20, 20, 20]}
+          />
+
           <Controls />
           <EffectComposer>
             <Noise opacity={0.05} />
