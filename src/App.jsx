@@ -1,22 +1,13 @@
 import { getProject } from '@theatre/core';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { Canvas, useThree } from '@react-three/fiber';
 import {
-  useGLTF,
   OrbitControls,
-  FlyControls,
-  FirstPersonControls,
-  Sparkles,
-  Environment,
-  PerspectiveCamera,
+  useGLTF,
 } from '@react-three/drei';
 import {
   EffectComposer,
-  DepthOfField,
-  Bloom,
-  Vignette,
   Noise,
 } from '@react-three/postprocessing';
-import { KernelSize, BlendFunction } from 'postprocessing';
 import { proxy, useSnapshot } from 'valtio';
 import { editable as e, SheetProvider } from '@theatre/r3f';
 import InstancedModel from '/src/Components/demo';
@@ -24,7 +15,7 @@ import stateTheatre from '/src/state.json';
 import { useLayoutEffect, useState, useEffect } from 'react';
 import ManModel from '/src/Components/manModel';
 
-// Error Boundary
+// Error Boundary Component
 function ErrorBoundary({ children }) {
   const [hasError, setHasError] = useState(false);
 
@@ -35,7 +26,6 @@ function ErrorBoundary({ children }) {
   }, [hasError]);
 
   if (hasError) {
-    // Render fallback UI
     return <div>Something went wrong.</div>;
   }
 
@@ -43,14 +33,12 @@ function ErrorBoundary({ children }) {
     return children;
   } catch (error) {
     setHasError(error);
-    return null; // Or render a fallback component
+    return null;
   }
 }
 
 const modes = ['translate', 'rotate', 'scale'];
 const state = proxy({ current: null, mode: 0 });
-
-console.log(stateTheatre);
 
 function Controls() {
   const snap = useSnapshot(state);
@@ -76,63 +64,93 @@ function Controls() {
 }
 
 export default function App() {
-  const sheet = getProject('Butterfly', { state: stateTheatre }).sheet('Scene');
+  const sheet = getProject('Conference', { state: stateTheatre }).sheet('Scene');
+  const [selected, setSelected] = useState('1');
 
   useLayoutEffect(() => {
     sheet.sequence.play({ iterationCount: 1000 });
-  });
+  }, []);
 
   return (
-    <Canvas
-      camera={{ near: 1, far: 1000 }}
-    >
-      <SheetProvider sheet={sheet}>
-        <ErrorBoundary>  {/* Wrap the entire SheetProvider in the ErrorBoundary */}
-          {/* <Environment files="/background3.hdr" /> */}
-          <ambientLight intensity={0.5} />
-          <directionalLight
-            position={[0, 0, 5]}
-            intensity={1}
-            color="#ffffff"
-            castShadow
-          />
-          {/* <spotLight
-                        position={[0, 50, 10]}
-                        angle={0.15}
-                        penumbra={1}
-                        intensity={2}
-                    /> */}
-          <hemisphereLight
-            intensity={0.2}
-          />
-          <InstancedModel />
-          <ManModel
-            position={[-75, 5, 80]}
-            rotation={[0, 5, 0]}
-            scale={[20, 20, 20]}
-          />
-          <ManModel
-            position={[-63, 5, -66]}
-            rotation={[0, 0, 0]}
-            scale={[20, 20, 20]}
-          />
-          <ManModel
-            position={[50, 5, -75]}
-            rotation={[0, -5, 0]}
-            scale={[20, 20, 20]}
-          />
-          <ManModel
-            position={[40, 5, 92]}
-            rotation={[0, -8.5, 0]}
-            scale={[20, 20, 20]}
-          />
+    <div style={{ position: 'relative', width: '100vw', height: '100vh' }}>
+      {/* Dropdown menu */}
+      <div style={{
+        position: 'absolute',
+        top: '20px',
+        left: '20px',
+        zIndex: 1000,
+        background: 'rgba(0,0,0,0.5)',
+        padding: '10px',
+        borderRadius: '8px',
+        color: 'white'
+      }}>
+        <label htmlFor="model-select" style={{ marginRight: '8px' }}>Select Model:</label>
+        <select
+          id="model-select"
+          value={selected}
+          onChange={(e) => setSelected(e.target.value)}
+        >
+          <option value="1">Fortune</option>
+          <option value="2">Website</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </div>
 
-          <Controls />
-          <EffectComposer>
-            <Noise opacity={0.05} />
-          </EffectComposer>
-        </ErrorBoundary>
-      </SheetProvider>
-    </Canvas>
+      {/* 3D Canvas */}
+      <Canvas camera={{ near: 1, far: 1000 }}>
+        <SheetProvider sheet={sheet}>
+          <ErrorBoundary>
+            <ambientLight intensity={0.5} />
+            <directionalLight
+              position={[0, 0, 5]}
+              intensity={1}
+              color="#ffffff"
+              castShadow
+            />
+            <hemisphereLight intensity={0.2} />
+
+            <InstancedModel />
+
+            {/* Conditionally render ManModels based on dropdown */}
+          
+              <ManModel
+                position={[-75, 5, 80]}
+                rotation={[0, 5, 0]}
+                scale={[20, 20, 20]}
+              />
+            
+          
+              <ManModel
+                position={[-63, 5, -66]}
+                rotation={[0, 0, 0]}
+                scale={[20, 20, 20]}
+              />
+            
+        
+              <ManModel
+                position={[50, 5, -75]}
+                rotation={[0, -5, 0]}
+                scale={[20, 20, 20]}
+              />
+            
+        
+              <ManModel
+                position={[40, 5, 92]}
+                rotation={[0, -8.5, 0]}
+                scale={[20, 20, 20]}
+              />
+            
+          
+
+            <Controls />
+            <EffectComposer>
+              <Noise opacity={0.05} />
+            </EffectComposer>
+          </ErrorBoundary>
+        </SheetProvider>
+      </Canvas>
+    </div>
   );
 }
