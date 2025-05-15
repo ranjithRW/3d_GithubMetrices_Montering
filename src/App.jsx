@@ -59,11 +59,11 @@ function Controls() {
 
 // Predefined positions for the man models
 const predefinedPositions = [
-  { position: [-75, 5, 80], rotation: [0, 5, 0], scale: [20, 20, 20] },
   { position: [-63, 5, -66], rotation: [0, 0, 0], scale: [20, 20, 20] },
   { position: [50, 5, -75], rotation: [0, -5, 0], scale: [20, 20, 20] },
   { position: [40, 5, 92], rotation: [0, -8.5, 0], scale: [20, 20, 20] },
-  { position: [0, 5, -110], rotation: [0, 0, 0], scale: [20, 20, 20] }
+  { position: [0, 5, -110], rotation: [0, 0, 0], scale: [20, 20, 20] },
+  { position: [-75, 5, 80], rotation: [0, 5, 0], scale: [20, 20, 20] },
 ];
 
 // Common animation configuration to ensure perfect synchronization
