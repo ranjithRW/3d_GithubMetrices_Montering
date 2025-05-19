@@ -63,7 +63,13 @@ export default function GitHubMetricsViewer() {
           border-right: 1px solid #ddd;
           overflow-y: auto;
           flex-shrink: 0;
+          scrollbar-width: none;
+         -ms-overflow-style: none; 
+
         }
+         .sidebar::-webkit-scrollbar {
+         display: none; 
+         }
         
         .sidebar-header {
           padding: 1rem;
@@ -203,8 +209,8 @@ export default function GitHubMetricsViewer() {
           GitHub Metrics Resources
         </div>
         {resources.map((resource, index) => (
-          <div 
-            key={index} 
+          <div
+            key={index}
             className={`sidebar-item ${selectedResource === resource.resource ? 'active' : ''}`}
             onClick={() => handleResourceSelect(resource.resource)}
           >
@@ -214,8 +220,8 @@ export default function GitHubMetricsViewer() {
             <div className="sidebar-stats">
               <div className="percentage">{(resource.bandwidthToday * 100).toFixed(0)}%</div>
               <div className="progress-bar">
-                <div 
-                  className="progress-fill-sidebar" 
+                <div
+                  className="progress-fill-sidebar"
                   style={{ width: `${(resource.bandwidthToday * 100).toFixed(0)}%` }}
                 ></div>
               </div>
