@@ -107,7 +107,10 @@ export default function GitHubMetricsViewer() {
           ))}
         </select>
       </div>
-
+      <div className="metric-card">
+        <div>Bandwidth Today</div>
+        <strong>{(selectedData.bandwidthToday * 100).toFixed(2)}%</strong>
+      </div>
       {selectedData && (
         <div className="resource-details">
           <h3>Selected Resource: {selectedData.resource}</h3>
@@ -127,7 +130,7 @@ export default function GitHubMetricsViewer() {
             )}
           </div>
 
-          <div className="section">
+          {/* <div className="section">
             <h3>All Projects Contributions</h3>
             {Object.entries(selectedData.allProjectsContributionsBreakdown || {}).length > 0 ? (
               <ul>
@@ -140,7 +143,7 @@ export default function GitHubMetricsViewer() {
             ) : (
               <p>No all projects contributions data</p>
             )}
-          </div>
+          </div> */}
 
           <div className="section">
             <h3>Performance Metrics</h3>
