@@ -99,7 +99,7 @@ const ANIMATION_CONFIG = {
 };
 
 // Animated Man Model component with transitions
-function AnimatedManModel({ resource, positionData, isEntering, isExiting, delayedIssues }) {
+function AnimatedManModel({ resource, positionData, isEntering, isExiting, delayedIssues, onInfoClick }) {
   const { position, rotation, scale } = positionData;
 
   // Calculate animation values
@@ -129,6 +129,7 @@ function AnimatedManModel({ resource, positionData, isEntering, isExiting, delay
         scale={scale}
         label={resource.name}
         info={info} // Pass the combined info here
+        onInfoClick={onInfoClick} // Pass the click handler
       />
     </animated.group>
   );
@@ -153,6 +154,9 @@ function AnimatedInstancedModel({ isEntering, isExiting }) {
 
 export default function Modelpage() {
   const sheet = getProject('Conference', { state: stateTheatre }).sheet('Scene');
+  
+  // State for tracking which model's info to display
+  const [displayInfo, setDisplayInfo] = useState(null);
 
   const [resourceData, setResourceData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -175,6 +179,16 @@ export default function Modelpage() {
   useLayoutEffect(() => {
     sheet.sequence.play({ iterationCount: 1000 });
   }, []);
+
+  // Handle info click from any ManModel
+  const handleInfoClick = (info) => {
+    // If the same model is clicked again, toggle visibility
+    if (displayInfo && displayInfo.label === info.label) {
+      setDisplayInfo(null);
+    } else {
+      setDisplayInfo(info);
+    }
+  };
 
   // Fetch and process data
   useEffect(() => {
@@ -236,6 +250,9 @@ export default function Modelpage() {
   // Handle project selection change
   useEffect(() => {
     if (!selected || selected === previousSelected || !projectResources[selected]) return;
+
+    // Clear any displayed info when switching projects
+    setDisplayInfo(null);
 
     if (previousSelected) {
       // Start transition animation
@@ -370,10 +387,50 @@ export default function Modelpage() {
       }}>
         {selected && projectResources[selected] && (
           <div>Resources on {selected}: {projectResources[selected].length}</div>
-          //<div>Resources on {selected}: {projectResources[selected].map(resource => resource.name).join(', ')}</div>
         )}
       </div>
 
+      {/* Info Panel - Fixed at bottom right */}
+      {displayInfo && (
+        <div style={{
+          position: 'absolute',
+          bottom: '20px',
+          right: '20px',
+          zIndex: 1000,
+          background: 'white',
+          padding: '15px',
+          borderRadius: '8px',
+          width: '350px',
+          maxHeight: '300px',
+          overflowY: 'auto',
+          boxShadow: '0 4px 8px rgba(0,0,0,0.2)'
+        }}>
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center',
+            marginBottom: '10px',
+            borderBottom: '1px solid #e0e0e0',
+            paddingBottom: '10px'
+          }}>
+            <h3 style={{ margin: 0 }}>{displayInfo.label}</h3>
+            <button 
+              onClick={() => setDisplayInfo(null)}
+              style={{ 
+                background: 'none', 
+                border: 'none', 
+                cursor: 'pointer', 
+                fontSize: '16px' 
+              }}
+            >
+              ✕
+            </button>
+          </div>
+          <div style={{ whiteSpace: 'pre-line' }}>
+            {displayInfo.info}
+          </div>
+        </div>
+      )}
 
       <Canvas camera={{ position: [0, 0, 200], near: 1, far: 1000 }}>
         <SheetProvider sheet={sheet}>
@@ -398,7 +455,8 @@ export default function Modelpage() {
                 positionData={item.positionData}
                 isEntering={animationState.isEntering}
                 isExiting={animationState.isExiting}
-                delayedIssues={item.resource.delayedIssues}  // Pass delayedIssues to the component
+                delayedIssues={item.resource.delayedIssues}
+                onInfoClick={handleInfoClick}
               />
             ))}
 
@@ -410,7 +468,8 @@ export default function Modelpage() {
                 positionData={item.positionData}
                 isEntering={false}
                 isExiting={true}
-                delayedIssues={item.resource.delayedIssues} // Pass delayedIssues to the component
+                delayedIssues={item.resource.delayedIssues}
+                onInfoClick={handleInfoClick}
               />
             ))}
 

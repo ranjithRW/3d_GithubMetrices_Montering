@@ -1,16 +1,13 @@
-import React, { useRef, useEffect, useMemo, useState } from 'react';
+import React, { useRef, useEffect, useMemo } from 'react';
 import { useGLTF, useAnimations, Text } from '@react-three/drei';
 import { clone } from 'three/examples/jsm/utils/SkeletonUtils';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
 
-const ManModel = ({ label = "", info = "", position, rotation, scale }) => {
+const ManModel = ({ label = "", info = "", position, rotation, scale, onInfoClick }) => {
     const groupRef = useRef();
-    const panelGroupRef = useRef();
-    const panelRef = useRef();
     const labelRef = useRef();
     const { scene, animations } = useGLTF('/man.glb');
-    const [showInfo, setShowInfo] = useState(false);
 
     const clonedScene = useMemo(() => clone(scene), [scene]);
     const { actions } = useAnimations(animations, groupRef);
@@ -19,70 +16,30 @@ const ManModel = ({ label = "", info = "", position, rotation, scale }) => {
     const modelHeight = boundingBox.max.y - boundingBox.min.y;
     const labelYOffset = modelHeight + 0.05;
 
-    // Panel dimensions
-    const panelWidth = 7;
-    const panelHeight = 2;
-
-    // Text formatting settings
-    const textFontSize = 0.25; // Reduced font size to fit more content
-    const lineHeight = 1.2;    // Reduced line height to be more compact
-    const textPadding = 0.2;   // Padding inside the panel
-
-    // Process the info text
-    const infoLines = info.split('\n');
-
-    // Calculate how many lines can fit in the panel with padding
-    const availableHeight = panelHeight - (textPadding * 2);
-    const maxLinesToShow = Math.floor(availableHeight / (textFontSize * lineHeight));
-
-    // Calculate total needed scroll positions
-    const totalScrollPositions = Math.max(1, infoLines.length - maxLinesToShow + 1);
-
-    // Scrolling state
-    const [scrollIndex, setScrollIndex] = useState(0);
-    const needsScrolling = infoLines.length > maxLinesToShow;
-
-    // Make the panel face the camera on every frame
+    // Make the label face the camera on every frame
     useFrame(({ camera }) => {
-        // Determine which panel to make face the camera
-        const currentPanel = showInfo ? panelRef.current : labelRef.current;
-        
-        if (panelGroupRef.current && currentPanel) {
-            // Get the panel group's world position
-            const panelWorldPosition = new THREE.Vector3();
-            panelGroupRef.current.getWorldPosition(panelWorldPosition);
+        if (labelRef.current) {
+            // Get the label's world position
+            const labelWorldPosition = new THREE.Vector3();
+            labelRef.current.getWorldPosition(labelWorldPosition);
             
-            // Calculate direction from the panel to the camera
+            // Calculate direction from the label to the camera
             const lookAtPosition = new THREE.Vector3()
                 .copy(camera.position)
-                .sub(panelWorldPosition)
-                .add(panelWorldPosition);
+                .sub(labelWorldPosition)
+                .add(labelWorldPosition);
                 
-            // Adjust y-axis to keep panel upright
-            lookAtPosition.y = panelWorldPosition.y;
+            // Adjust y-axis to keep label upright
+            lookAtPosition.y = labelWorldPosition.y;
             
-            // Apply the billboard effect to the panel group
-            panelGroupRef.current.lookAt(lookAtPosition);
+            // Apply the billboard effect to the label
+            labelRef.current.lookAt(lookAtPosition);
             
-            // Reset rotation on X and Z axes to keep panel perfectly upright
-            panelGroupRef.current.rotation.x = 0;
-            panelGroupRef.current.rotation.z = 0;
+            // Reset rotation on X and Z axes to keep label perfectly upright
+            labelRef.current.rotation.x = 0;
+            labelRef.current.rotation.z = 0;
         }
     });
-
-    // Auto-scroll effect
-    useEffect(() => {
-        if (!showInfo || !needsScrolling) return;
-
-        const interval = setInterval(() => {
-            setScrollIndex(prev => {
-                const nextIndex = prev + 1;
-                return nextIndex >= totalScrollPositions ? 0 : nextIndex;
-            });
-        }, 2000);
-
-        return () => clearInterval(interval);
-    }, [showInfo, needsScrolling, totalScrollPositions]);
 
     // Play animation
     useEffect(() => {
@@ -92,9 +49,11 @@ const ManModel = ({ label = "", info = "", position, rotation, scale }) => {
 
     const handleClick = (e) => {
         e.stopPropagation();
-        if (info) {
-            setShowInfo(!showInfo);
-            setScrollIndex(0);
+        if (info && onInfoClick) {
+            onInfoClick({
+                label,
+                info
+            });
         }
     };
 
@@ -108,77 +67,20 @@ const ManModel = ({ label = "", info = "", position, rotation, scale }) => {
         >
             <primitive object={clonedScene} />
 
-            {/* Panel container that will hold either label or info panel */}
-            <group ref={panelGroupRef} position={[0, labelYOffset, 0]}>
-                {/* Name Label (shown when info panel is hidden) */}
-                {label && !showInfo && (
-                    <group ref={labelRef}>
-                        <Text
-                            position={[0, 0, 0]}
-                            fontSize={0.3}
-                            color="black"
-                            anchorX="center"
-                            anchorY="top-baseline"
-                        >
-                            {label}
-                        </Text>
-                    </group>
-                )}
-
-                {/* Info Panel */}
-                {showInfo && (
-                    <group ref={panelRef}>
-                        {/* Background Panel */}
-                        <mesh>
-                            <planeGeometry args={[panelWidth, panelHeight]} />
-                            <meshBasicMaterial color="white" transparent opacity={0.9} side={THREE.DoubleSide} />
-                        </mesh>
-
-                        {/* Title bar */}
-                        <mesh position={[0, panelHeight / 2 - 0.3, 0.01]}>
-                            <planeGeometry args={[panelWidth, 0.6]} />
-                            <meshBasicMaterial color="#e0e0e0" side={THREE.DoubleSide} />
-                        </mesh>
-                     
-
-                        {/* Content area */}
-                        <group position={[0, 0, 0.01]}>
-                            {/* Text content - strictly contained within panel boundaries */}
-                            <Text
-                                position={[0, panelHeight / 2 - 0.3, 0.2]}
-                                fontSize={textFontSize}
-                                color="black"
-                                anchorX="center"
-                                anchorY="top"
-                                maxWidth={panelWidth - textPadding * 2}
-                                lineHeight={lineHeight}
-                                textAlign="left"
-                                clipRect={[
-                                    -panelWidth / 2 + textPadding,                 // left
-                                    -panelHeight / 0 + textPadding,                // bottom
-                                    panelWidth / 2 - textPadding,                  // right
-                                    panelHeight / 2 - 0.7                          // top (adjusted for title)
-                                ]}
-                            >
-                                {infoLines.slice(scrollIndex, scrollIndex + maxLinesToShow).join('\n')}
-                            </Text>
-
-                            {/* Scroll indicator */}
-                            {needsScrolling && (
-                                <Text
-                                    position={[panelWidth / 2 - 0.5, -panelHeight / 2 + 0.15, 0]}
-                                    fontSize={0.2}
-                                    color="gray"
-                                    anchorX="center"
-                                    anchorY="bottom"
-                                >
-                                    {`${scrollIndex + 1}/${totalScrollPositions}`}
-                                </Text>
-                            )}
-                        </group>
-                    </group>
-                )}
-            </group>
+            {/* Name Label */}
+            {label && (
+                <group ref={labelRef} position={[0, labelYOffset, 0]}>
+                    <Text
+                        position={[0, 0, 0]}
+                        fontSize={0.3}
+                        color="black"
+                        anchorX="center"
+                        anchorY="top-baseline"
+                    >
+                        {label}
+                    </Text>
+                </group>
+            )}
         </group>
     );
 };
