@@ -114,12 +114,18 @@ function AnimatedManModel({ resource, positionData, isEntering, isExiting, delay
     immediate: false,
   });
 
-  // Format the delayed issues information
-  const delayedIssuesInfo = delayedIssues && delayedIssues.length > 0
-    ? `Delayed Issues:\n${delayedIssues.map(issue => `  - ${issue.issueTitle}`).join('\n')}`
-    : 'No delayed issues';
-  // Combine all the info, including the delayed issues
-  const info = `${delayedIssuesInfo}`;
+  // Format the delayed issues information with their URLs
+  const formattedIssues = delayedIssues && delayedIssues.length > 0
+    ? delayedIssues.map(issue => ({
+        title: issue.issueTitle,
+        url: issue.issueUrl || '#' // Use the URL if available, otherwise a placeholder
+      }))
+    : [];
+
+  // Pass the data in a structured format
+  const info = {
+    delayedIssues: formattedIssues
+  };
 
   return (
     <animated.group {...props}>
@@ -128,7 +134,7 @@ function AnimatedManModel({ resource, positionData, isEntering, isExiting, delay
         rotation={rotation}
         scale={scale}
         label={resource.name}
-        info={info} // Pass the combined info here
+        info={info} // Pass the structured info here
         onInfoClick={onInfoClick} // Pass the click handler
       />
     </animated.group>
@@ -149,6 +155,23 @@ function AnimatedInstancedModel({ isEntering, isExiting }) {
     <animated.group {...props}>
       <InstancedModel />
     </animated.group>
+  );
+}
+
+// Issue item component with click handler
+function IssueItem({ issue, onIssueClick }) {
+  return (
+    <div 
+      onClick={() => onIssueClick(issue.url)}
+      style={{ 
+        padding: '5px 0',
+        cursor: 'pointer',
+        color: '#0066cc',
+        textDecoration: 'underline'
+      }}
+    >
+      • {issue.title}
+    </div>
   );
 }
 
@@ -187,6 +210,13 @@ export default function Modelpage() {
       setDisplayInfo(null);
     } else {
       setDisplayInfo(info);
+    }
+  };
+
+  // Handle issue click to navigate to URL
+  const handleIssueClick = (url) => {
+    if (url && url !== '#') {
+      window.open(url, '_blank');
     }
   };
 
@@ -426,8 +456,22 @@ export default function Modelpage() {
               ✕
             </button>
           </div>
-          <div style={{ whiteSpace: 'pre-line' }}>
-            {displayInfo.info}
+          
+          <div>
+            <h4 style={{ marginTop: '10px', marginBottom: '5px' }}>
+              {displayInfo.info?.delayedIssues?.length > 0 
+                ? 'Delayed Issues:' 
+                : 'No delayed issues'}
+            </h4>
+            
+            {/* Render clickable issues */}
+            {displayInfo.info?.delayedIssues?.map((issue, index) => (
+              <IssueItem 
+                key={index} 
+                issue={issue} 
+                onIssueClick={handleIssueClick} 
+              />
+            ))}
           </div>
         </div>
       )}
