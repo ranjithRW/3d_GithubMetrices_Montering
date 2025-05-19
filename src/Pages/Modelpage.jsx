@@ -48,7 +48,7 @@ function CameraSetup() {
 
   useEffect(() => {
     // Set initial camera position farther away to see the full model
-    camera.position.set(0, 60, 250);
+    camera.position.set(0, 100, 350);
     camera.updateProjectionMatrix();
   }, [camera]);
 

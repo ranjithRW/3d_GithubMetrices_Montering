@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import ManModel from './Modelpage'
 
 export default function GitHubMetricsViewer() {
   const [resources, setResources] = useState([]);
@@ -222,70 +223,7 @@ export default function GitHubMetricsViewer() {
           </div>
         ))}
       </div>
-
-      <div className="main-content">
-        {selectedData && (
-          <div className="resource-details">
-            <h2>Selected Resource: {selectedData.resource}</h2>
-
-            <div className="section">
-              <h3>Current Projects Bandwidth</h3>
-              {Object.entries(selectedData.currentProjectsBandwidthBreakdown || {}).length > 0 ? (
-                <ul>
-                  {Object.entries(selectedData.currentProjectsBandwidthBreakdown).map(([project, value]) => (
-                    <li key={project}>
-                      <strong>{project}:</strong> {(value * 100).toFixed(2)}%
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p>No current projects bandwidth data</p>
-              )}
-            </div>
-
-            <div className="section">
-              <h3>Performance Metrics</h3>
-              <div className="grid">
-                <div className="metric-card bandwidth-card">
-                  <div className="progress-fill" style={{ width: `${(selectedData.bandwidthToday * 100).toFixed(2)}%` }}></div>
-                  <div className="content">
-                    <div>Bandwidth Today</div>
-                    <strong>{(selectedData.bandwidthToday * 100).toFixed(2)}%</strong>
-                  </div>
-                </div>
-
-                <div className="metric-card">
-                  <div>Closing Rate</div>
-                  <strong>{selectedData.closingRate}%</strong>
-                </div>
-                <div className="metric-card">
-                  <div>Closed Issues</div>
-                  <strong>{selectedData.closedIssues}</strong>
-                </div>
-                <div className="metric-card">
-                  <div>Cost</div>
-                  <strong>${selectedData.cost}</strong>
-                </div>
-              </div>
-            </div>
-
-            {selectedData.delayedIssueCount > 0 && (
-              <div className="section">
-                <h3>Delayed Issues ({selectedData.delayedIssueCount})</h3>
-                <ul>
-                  {selectedData.delayedIssues.map((issue, idx) => (
-                    <li key={idx} className="delayed-issue">
-                      <a href={issue.issueUrl} target="_blank" rel="noopener noreferrer">
-                        {issue.issueTitle}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+      <ManModel />
     </div>
   );
 }
