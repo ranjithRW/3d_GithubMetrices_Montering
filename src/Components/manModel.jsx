@@ -22,19 +22,19 @@ const ManModel = ({ label = "", info = "", position, rotation, scale, onInfoClic
             // Get the label's world position
             const labelWorldPosition = new THREE.Vector3();
             labelRef.current.getWorldPosition(labelWorldPosition);
-            
+
             // Calculate direction from the label to the camera
             const lookAtPosition = new THREE.Vector3()
                 .copy(camera.position)
                 .sub(labelWorldPosition)
                 .add(labelWorldPosition);
-                
+
             // Adjust y-axis to keep label upright
             lookAtPosition.y = labelWorldPosition.y;
-            
+
             // Apply the billboard effect to the label
             labelRef.current.lookAt(lookAtPosition);
-            
+
             // Reset rotation on X and Z axes to keep label perfectly upright
             labelRef.current.rotation.x = 0;
             labelRef.current.rotation.z = 0;
@@ -64,7 +64,16 @@ const ManModel = ({ label = "", info = "", position, rotation, scale, onInfoClic
             rotation={rotation}
             scale={scale}
             onPointerDown={handleClick}
+            onPointerOver={(e) => {
+                e.stopPropagation();
+                document.body.style.cursor = 'pointer';
+            }}
+            onPointerOut={(e) => {
+                e.stopPropagation();
+                document.body.style.cursor = 'default';
+            }}
         >
+
             <primitive object={clonedScene} />
 
             {/* Name Label */}
