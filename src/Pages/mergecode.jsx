@@ -208,26 +208,29 @@ export default function GitHubMetricsViewer() {
         <div className="sidebar-header">
           GitHub Metrics Resources
         </div>
-        {resources.map((resource, index) => (
+    {[...resources]
+  .sort((a, b) => b.bandwidthToday - a.bandwidthToday)
+  .map((resource, index) => (
+    <div
+      key={index}
+      className={`sidebar-item ${selectedResource === resource.resource ? 'active' : ''}`}
+      onClick={() => handleResourceSelect(resource.resource)}
+    >
+      <div className="sidebar-item-content">
+        {resource.resource}
+      </div>
+      <div className="sidebar-stats">
+        <div className="percentage">{(resource.bandwidthToday * 100).toFixed(0)}%</div>
+        <div className="progress-bar">
           <div
-            key={index}
-            className={`sidebar-item ${selectedResource === resource.resource ? 'active' : ''}`}
-            onClick={() => handleResourceSelect(resource.resource)}
-          >
-            <div className="sidebar-item-content">
-              {resource.resource}
-            </div>
-            <div className="sidebar-stats">
-              <div className="percentage">{(resource.bandwidthToday * 100).toFixed(0)}%</div>
-              <div className="progress-bar">
-                <div
-                  className="progress-fill-sidebar"
-                  style={{ width: `${(resource.bandwidthToday * 100).toFixed(0)}%` }}
-                ></div>
-              </div>
-            </div>
-          </div>
-        ))}
+            className="progress-fill-sidebar"
+            style={{ width: `${(resource.bandwidthToday * 100).toFixed(0)}%` }}
+          ></div>
+        </div>
+      </div>
+    </div>
+))}
+
       </div>
       <ManModel />
     </div>
