@@ -369,8 +369,8 @@ export default function Modelpage() {
         color: 'white'
       }}>
         {selected && projectResources[selected] && (
-          // <div>Resources on {selected}: {projectResources[selected].length}</div>
-          <div>Resources on {selected}: {projectResources[selected].map(resource => resource.name).join(', ')}</div>
+          <div>Resources on {selected}: {projectResources[selected].length}</div>
+          //<div>Resources on {selected}: {projectResources[selected].map(resource => resource.name).join(', ')}</div>
         )}
       </div>
 

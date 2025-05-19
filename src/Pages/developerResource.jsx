@@ -91,6 +91,29 @@ export default function GitHubMetricsViewer() {
     color: blue;
     text-decoration: underline;
   }
+    .bandwidth-card {
+  position: relative;
+  overflow: hidden;
+  background: #eee; /* fallback */
+}
+
+.bandwidth-card .progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: #4caf50; /* green fill */
+  z-index: 0;
+  transition: width 0.5s ease-in-out;
+  border-radius: 4px;
+}
+
+.bandwidth-card .content {
+  position: relative;
+  z-index: 1;
+  padding: 0.5rem;
+}
+
 `}</style>
 
 
@@ -107,10 +130,7 @@ export default function GitHubMetricsViewer() {
           ))}
         </select>
       </div>
-      <div className="metric-card">
-        <div>Bandwidth Today</div>
-        <strong>{(selectedData.bandwidthToday * 100).toFixed(2)}%</strong>
-      </div>
+
       {selectedData && (
         <div className="resource-details">
           <h3>Selected Resource: {selectedData.resource}</h3>
@@ -129,8 +149,8 @@ export default function GitHubMetricsViewer() {
               <p>No current projects bandwidth data</p>
             )}
           </div>
-
-          {/* <div className="section">
+          {/* 
+          <div className="section">
             <h3>All Projects Contributions</h3>
             {Object.entries(selectedData.allProjectsContributionsBreakdown || {}).length > 0 ? (
               <ul>
@@ -148,10 +168,14 @@ export default function GitHubMetricsViewer() {
           <div className="section">
             <h3>Performance Metrics</h3>
             <div className="grid">
-              <div className="metric-card">
-                <div>Bandwidth Today</div>
-                <strong>{(selectedData.bandwidthToday * 100).toFixed(2)}%</strong>
-              </div>
+             <div className="metric-card bandwidth-card">
+  <div className="progress-fill" style={{ width: `${(selectedData.bandwidthToday * 100).toFixed(2)}%` }}></div>
+  <div className="content">
+    <div>Bandwidth Today</div>
+    <strong>{(selectedData.bandwidthToday * 100).toFixed(2)}%</strong>
+  </div>
+</div>
+
               <div className="metric-card">
                 <div>Closing Rate</div>
                 <strong>{selectedData.closingRate}%</strong>
