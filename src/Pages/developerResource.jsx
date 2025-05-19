@@ -46,6 +46,7 @@ export default function GitHubMetricsViewer() {
   return (
     <div className="container">
       <style>{`
+     
   .container {
     max-width: 800px;
     margin: 0 auto;
