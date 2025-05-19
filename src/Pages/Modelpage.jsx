@@ -368,8 +368,9 @@ export default function Modelpage() {
         borderRadius: '8px',
         color: 'white'
       }}>
-       {selected && projectResources[selected] && (
-          <div>Resources on {selected}: {projectResources[selected].length}</div>
+        {selected && projectResources[selected] && (
+          // <div>Resources on {selected}: {projectResources[selected].length}</div>
+          <div>Resources on {selected}: {projectResources[selected].map(resource => resource.name).join(', ')}</div>
         )}
       </div>
 
