@@ -8,36 +8,37 @@ export default function GitHubMetricsViewer() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const response = await fetch(
-          'https://githubmetricsbackend-erdfgta5drc3dzev.eastus-01.azurewebsites.net/v1/resource-details'
-        );
-        if (!response.ok) {
-          throw new Error(`Error fetching data: ${response.status}`);
-        }
-
-        const data = await response.json();
-        if (data.resourceDetails && Array.isArray(data.resourceDetails)) {
-          setResources(data.resourceDetails);
-          // Auto-select the first resource if available
-          if (data.resourceDetails.length > 0) {
-            setSelectedResource(data.resourceDetails[0].resource);
-          }
-        } else {
-          throw new Error('Invalid data format');
-        }
-      } catch (err) {
-        setError(err.message);
-        console.error('Error fetching data:', err);
-      } finally {
-        setIsLoading(false);
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(
+        'https://githubmetricsbackend-erdfgta5drc3dzev.eastus-01.azurewebsites.net/v1/resource-details'
+      );
+      if (!response.ok) {
+        throw new Error(`Error fetching data: ${response.status}`);
       }
-    };
 
-    fetchData();
-  }, []);
+      const data = await response.json();
+      if (data.resourceDetails && Array.isArray(data.resourceDetails)) {
+        setResources(data.resourceDetails);
+        // Do NOT auto-select the first resource
+        //  if (data.resourceDetails.length > 0) {
+        //     setSelectedResource(data.resourceDetails[0].resource);
+        //   }
+      } else {
+        throw new Error('Invalid data format');
+      }
+    } catch (err) {
+      setError(err.message);
+      console.error('Error fetching data:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  fetchData();
+}, []);
+
 
   const handleResourceSelect = (resourceName) => {
     setSelectedResource(resourceName);
