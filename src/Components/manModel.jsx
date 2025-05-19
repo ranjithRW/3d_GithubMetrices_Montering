@@ -72,8 +72,8 @@ const ManModel = ({ label = "", info = "", position, rotation, scale, onInfoClic
                 <group ref={labelRef} position={[0, labelYOffset, 0]}>
                     <Text
                         position={[0, 0, 0]}
-                        fontSize={0.3}
-                        color="black"
+                        fontSize={0.5}
+                        color="blue"
                         anchorX="center"
                         anchorY="top-baseline"
                     >
